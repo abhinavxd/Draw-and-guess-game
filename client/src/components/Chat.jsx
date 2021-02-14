@@ -10,12 +10,6 @@ const Chat = (props) => {
     const handleNewMessage = (e) => {
         e.preventDefault();
         props.soc.current.emit('new_message', { 'msg': inputBarText });
-        setChatMessages((prevState) => {
-            let newState = [...prevState];
-            let inputMessage = inputBarText;
-            newState.push(inputMessage);
-            return newState;
-        });
         setInputBarText("");
     };
 
@@ -25,7 +19,6 @@ const Chat = (props) => {
                 setChatMessages((prevState) => {
                     let newState = [...prevState];
                     let inputMessage = data.msg;
-                    console.log(data);
                     newState.push(inputMessage);
                     return newState;
                 });
@@ -33,7 +26,6 @@ const Chat = (props) => {
         }
 
     }, [props.soc.current])
-
 
 
     const handleChangeMessage = (e) => {
