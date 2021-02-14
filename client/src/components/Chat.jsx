@@ -1,5 +1,5 @@
 import "./../css/chat.css";
-import { Fragment, useState, useRef } from "react";
+import { Fragment, useState, useRef, useEffect } from "react";
 const Chat = (props) => {
     let inputField = useRef(null);
 
@@ -19,16 +19,22 @@ const Chat = (props) => {
         setInputBarText("");
     };
 
-    if (props.soc.current) {
-        props.soc.current.on('new_message', (data) => {
-            setChatMessages((prevState) => {
-                let newState = [...prevState];
-                let inputMessage = data.msg;
-                newState.push(inputMessage);
-                return newState;
+    useEffect(() => {
+        if (props.soc.current) {
+            props.soc.current.on('new_message', (data) => {
+                setChatMessages((prevState) => {
+                    let newState = [...prevState];
+                    let inputMessage = data.msg;
+                    console.log(data);
+                    newState.push(inputMessage);
+                    return newState;
+                });
             });
-        });
-    }
+        }
+
+    }, [props.soc.current])
+
+
 
     const handleChangeMessage = (e) => {
         setInputBarText(e.target.value)
