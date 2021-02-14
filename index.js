@@ -33,6 +33,6 @@ io.on('connection', socket => {
         socket.emit('erase');
     });
     socket.on('new_message', (data) => {
-        io.socket.emit('new_message', { msg: data.msg });
+        io.sockets.emit('new_message', { msg: data.msg });
     });
 });
