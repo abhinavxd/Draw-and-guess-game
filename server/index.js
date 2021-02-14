@@ -32,4 +32,7 @@ io.on('connection', socket => {
     socket.on('erase', (data) => {
         socket.emit('erase');
     });
+    socket.on('new_message', (data) => {
+        socket.broadcast.emit('new_message', { msg: data.msg });
+    });
 });
