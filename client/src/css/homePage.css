@@ -1,0 +1,16 @@
+#menu-container {
+    margin: 0 600px;
+    padding:15px;
+    position: relative;
+    top:100px;
+    background-color: lightpink;
+    border:1px solid grey;
+    border-radius: 5px;
+    min-width: 300px;
+}
+
+.play-button {
+    color:black;
+    padding:10px;
+    border-radius: 5px;
+}
