@@ -1,43 +1,77 @@
 import { io } from 'socket.io-client';
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import "../css/playArea.css";
 import Chat from "./Chat";
 
 const PlayArea = () => {
 
     let soc = useRef(null);
+    let w = useRef(800);
+    let h = useRef(600);
+    let canvas = useRef();
+    let ctx = useRef();
+    let flag = useRef(false);
+    let prevX = useRef(0);
+    let currX = useRef(0);
+    let prevY = useRef(0);
+    let currY = useRef(0);
+    let dot_flag = useRef(false);
 
-    var w = 800;
-    var h = 600;
-    var canvas, ctx, flag = false,
-        prevX = 0,
-        currX = 0,
-        prevY = 0,
-        currY = 0,
-        dot_flag = false;
+    let x = useRef("black");
+    let y = useRef(3);
 
-    var x = "black",
-        y = 4;
 
-    function init() {
-        canvas = document.getElementById('can');
-        ctx = canvas.getContext("2d");
+    const findxy = useCallback((res, e) => {
+        if (res === 'down') {
+            prevX.current = currX.current;
+            prevY.current = currY.current;
 
-        canvas.addEventListener("mousemove", function (e) {
+            currX.current = e.clientX - canvas.current.offsetLeft;
+            currY.current = e.clientY - canvas.current.offsetTop;
+
+            flag.current = true;
+            dot_flag.current = true;
+            if (dot_flag.current) {
+                ctx.current.beginPath();
+                ctx.current.fillStyle = x.current;
+                ctx.current.fillRect(currX.current, currY.current, 2, 2);
+                ctx.current.closePath();
+                dot_flag.current = false;
+            }
+        }
+        if (res === 'up' || res === "out") {
+            flag.current = false;
+        }
+        if (res === 'move') {
+            if (flag.current) {
+                prevX.current = currX.current;
+                prevY.current = currY.current;
+                currX.current = e.clientX - canvas.current.offsetLeft;
+                currY.current = e.clientY - canvas.current.offsetTop;
+                soc.current.emit('cords', { x: currX.current, y: currY.current, prevX: prevX.current, prevY: prevY.current });
+                draw();
+            }
+        }
+    }, []);
+
+    const init = useCallback(() => {
+        canvas.current = document.getElementById('can');
+        ctx.current = document.getElementById('can').getContext("2d");
+        canvas.current.addEventListener("mousemove", function (e) {
             findxy('move', e)
         }, false);
-        canvas.addEventListener("mousedown", function (e) {
+        canvas.current.addEventListener("mousedown", function (e) {
             findxy('down', e)
         }, false);
-        canvas.addEventListener("mouseup", function (e) {
+        canvas.current.addEventListener("mouseup", function (e) {
             findxy('up', e)
         }, false);
-        canvas.addEventListener("mouseout", function (e) {
+        canvas.current.addEventListener("mouseout", function (e) {
             findxy('out', e)
         }, false);
-    }
+    }, [findxy]);
 
-    function color(obj) {
+    const color = (obj) => {
         switch (obj.id) {
             case "green":
                 x = "green";
@@ -69,88 +103,51 @@ const PlayArea = () => {
     }
 
     function draw() {
-        ctx.beginPath();
-        ctx.moveTo(prevX, prevY);
-        ctx.lineTo(currX, currY);
-        ctx.strokeStyle = x;
-        ctx.lineWidth = y;
-        ctx.stroke();
-        ctx.closePath();
+        ctx.current.beginPath();
+        ctx.current.moveTo(prevX.current, prevY.current);
+        ctx.current.lineTo(currX.current, currY.current);
+        ctx.current.strokeStyle = x.current;
+        ctx.current.lineWidth = y.current;
+        ctx.current.stroke();
+        ctx.current.closePath();
     }
 
     function erase() {
-        ctx.clearRect(0, 0, w, h);
+        ctx.current.clearRect(0, 0, w.current, h.current);
         soc.current.emit('erase');
-    }
-
-    function findxy(res, e) {
-        if (res === 'down') {
-            prevX = currX;
-            prevY = currY;
-            currX = e.clientX - canvas.offsetLeft;
-            currY = e.clientY - canvas.offsetTop;
-
-            flag = true;
-            dot_flag = true;
-            if (dot_flag) {
-                ctx.beginPath();
-                ctx.fillStyle = x;
-                ctx.fillRect(currX, currY, 2, 2);
-                ctx.closePath();
-                dot_flag = false;
-            }
-        }
-        if (res === 'up' || res === "out") {
-            flag = false;
-        }
-        if (res === 'move') {
-            if (flag) {
-                prevX = currX;
-                prevY = currY;
-                currX = e.clientX - canvas.offsetLeft;
-                currY = e.clientY - canvas.offsetTop;
-                soc.current.emit('cords', { x: currX, y: currY, prevX: prevX, prevY: prevY });
-                draw();
-            }
-        }
     }
 
     useEffect(() => {
         init();
         soc.current = io(process.env.REACT_APP_API_URL);
-    }, []);
-
-    // useEffect(() => {
-    if (soc.current) {
-        soc.current.on('cords', (data) => {
-            currX = data.x;
-            currY = data.y;
-            prevX = data.prevX;
-            prevY = data.prevY;
-            draw();
-        });
-        soc.current.on('erase', () => {
-            erase();
-        });
-
-    }
-    // }, [soc])
+    }, [init]);
 
     useEffect(() => {
         if (soc.current) {
-            soc.current.on('connect', () => {
-                console.log(soc.current.id);
-            });
             soc.current.on('cords', (data) => {
-                currX = data.x;
-                currY = data.y;
+                currX.current = data.x;
+                currY.current = data.y;
+                prevX.current = data.prevX;
+                prevY.current = data.prevY;
+                draw();
+            });
+            soc.current.on('erase', () => {
+                erase();
+            });
+
+        }
+    }, [soc])
+
+    useEffect(() => {
+        if (soc.current) {
+            soc.current.on('cords', (data) => {
+                currX.current = data.x;
+                currY.current = data.y;
                 draw();
             });
         }
 
-    }, [soc.current])
-
-
+    }, [soc])
 
     return (
         <div className="parentContainer">
@@ -160,10 +157,9 @@ const PlayArea = () => {
             <div id="chatContainer">
                 <Chat soc={soc} />
             </div>
-
-            {/* <div className='containerToolBar'>
+            <div className='containerToolBar'>
                 <button onClick={erase}>Erase</button>
-            </div> */}
+            </div>
         </div >
 
     );
