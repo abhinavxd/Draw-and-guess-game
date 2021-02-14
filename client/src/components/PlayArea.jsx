@@ -1,6 +1,7 @@
 import { io } from 'socket.io-client';
 import { useEffect, useRef } from "react";
 import "../css/playArea.css";
+import Chat from "./Chat";
 
 const PlayArea = () => {
 
@@ -119,20 +120,21 @@ const PlayArea = () => {
         soc.current = io(process.env.REACT_APP_API_URL);
     }, []);
 
-    useEffect(() => {
-        if (soc.current) {
-            soc.current.on('cords', (data) => {
-                currX = data.x;
-                currY = data.y;
-                prevX = data.prevX;
-                prevY = data.prevY;
-                draw();
-            });
-            soc.current.on('erase', () => {
-                erase();
-            });
-        }
-    }, [soc])
+    // useEffect(() => {
+    if (soc.current) {
+        soc.current.on('cords', (data) => {
+            currX = data.x;
+            currY = data.y;
+            prevX = data.prevX;
+            prevY = data.prevY;
+            draw();
+        });
+        soc.current.on('erase', () => {
+            erase();
+        });
+
+    }
+    // }, [soc])
 
     useEffect(() => {
         if (soc.current) {
@@ -149,16 +151,21 @@ const PlayArea = () => {
     }, [soc.current])
 
 
+
     return (
-        <div>
-            <div>
-                <canvas width={800} height={600} id={'can'} >
-                </canvas>
+        <div className="parentContainer">
+            <div id='containerCanvas'>
+                <canvas width={800} height={600} id={'can'} />
             </div>
-            <div>
+            <div id="chatContainer">
+                <Chat soc={soc} />
+            </div>
+
+            {/* <div className='containerToolBar'>
                 <button onClick={erase}>Erase</button>
-            </div>
+            </div> */}
         </div >
+
     );
 }
 
