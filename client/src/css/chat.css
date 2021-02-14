@@ -1,0 +1,20 @@
+
+.chats {
+    height: calc(100%);
+    overflow-y: auto;
+    background-color:aqua;
+}
+
+.chats p {
+    padding: 7px;
+    margin: 0;
+    word-wrap: break-word;
+}
+
+#chatInput { 
+    height: 34px;  
+}
+
+#chatTextArea {
+    height: 20px;
+}

@@ -1,3 +1,32 @@
-canvas {
-    border:1px solid;
+#containerCanvas {
+    position: relative;
+    flex: 1 1 auto;
+    min-width: 300px;
+    position: relative;
+    margin: 0;
+    line-height: 0;
+}
+
+.parentContainer {
+    display: flex;
+    justify-content: center;
+}
+
+.containerToolBar {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    margin-top: 8px;
+}
+
+#chatContainer {  
+    position: relative;
+    margin-left: 8px;
+    width: 340px;
+    min-width: 340px;
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
