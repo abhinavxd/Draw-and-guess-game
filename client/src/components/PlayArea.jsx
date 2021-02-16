@@ -2,6 +2,8 @@ import { io } from 'socket.io-client';
 import { useCallback, useEffect, useRef } from "react";
 import "../css/playArea.css";
 import Chat from "./Chat";
+import PlayerList from './PlayerList';
+import TopGameHeader from './TopGameHeader';
 
 const PlayArea = () => {
 
@@ -150,18 +152,23 @@ const PlayArea = () => {
     }, [soc])
 
     return (
-        <div className="parentContainer">
-            <div id='containerCanvas'>
-                <canvas width={800} height={600} id={'can'} />
-            </div>
-            <div id="chatContainer">
-                <Chat soc={soc} />
-            </div>
-            <div className='containerToolBar'>
-                <button onClick={erase}>Erase</button>
-            </div>
-        </div >
-
+        <div class='gameScreen'>
+            <TopGameHeader />
+            <div className="parentContainer">
+                <div id='playerList'>
+                    <PlayerList />
+                </div>
+                <div id='containerCanvas'>
+                    <canvas width={800} height={600} id={'can'} />
+                </div>
+                <div id="chatContainer">
+                    <Chat soc={soc} />
+                </div>
+                {/* <div className='containerToolBar'>
+                    <button onClick={erase}>Erase</button>
+                </div> */}
+            </div >
+        </div>
     );
 }
 
