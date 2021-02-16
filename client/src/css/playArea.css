@@ -1,13 +1,10 @@
 #containerCanvas {
-    position: relative;
-    flex: 1 1 auto;
-    margin: 0;
     line-height: 0;
 }
 
 .parentContainer {
     display: flex;
-    justify-content:space-around;
+    justify-content: center;
 }
 
 .containerToolBar {
@@ -19,7 +16,6 @@
 }
 
 #chatContainer {  
-    position: relative;
     margin-left: 8px;
     width: 340px;
     min-width: 340px;
@@ -29,7 +25,24 @@
     justify-content: space-between;
 }
 
+#playerList {
+    background-color: white;
+    min-width: 190px;
+    margin: 0px 6px 0px 0px;
+}
+
 #can {
     border: 1px solid;
     background-color: white;
+}
+
+.color-white {
+    color:white;
+}
+
+.gameScreen {
+    margin:0px 100px;
+    margin-bottom: 64px;
+    display: flex;
+    flex-direction: column;
 }

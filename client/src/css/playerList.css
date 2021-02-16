@@ -1,0 +1,7 @@
+.player {
+    border-bottom: 1px solid grey;
+}
+
+.player:nth-child(odd) {
+    background-color: #EEE;
+}
