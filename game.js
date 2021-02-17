@@ -4,7 +4,6 @@ exports.initGame = (io_, socket) => {
     io = io_;
     gameSocket = socket;
 
-    // server events
     // gameSocket.on('createNewGame', hostCreateNewGame);
     // gameSocket.on('hostRoomFull', hostCreateNewGame);
     // gameSocket.on('hostCountDownFinished', hostCreateNewGame);
