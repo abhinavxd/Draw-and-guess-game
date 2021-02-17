@@ -29,13 +29,5 @@ const io = require('socket.io')(server, {
 io.on('connection', socket => {
     console.log("User connected with id " + socket.id);
     game.initGame(io, socket);
-    // socket.on('cords', (data) => {
-    //     socket.broadcast.emit('cords', { x: data.x, y: data.y, prevX: data.prevX, prevY: data.prevY });
-    // });
-    // socket.on('erase', (data) => {
-    //     socket.emit('erase');
-    // });
-    // socket.on('new_message', (data) => {
-    //     io.sockets.emit('new_message', { msg: data.msg });
-    // });
+
 });
