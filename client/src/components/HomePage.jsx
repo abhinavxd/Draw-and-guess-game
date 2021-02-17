@@ -3,17 +3,17 @@ import Header from "./Header";
 import { useState } from "react";
 import PlayArea from "./PlayArea";
 
-const HomePage = (props) => {
+const HomePage = () => {
     const [gameStarted, setGameStarted] = useState(false);
     const startGameHandler = () => {
         setGameStarted(true);
     };
     return (
-        <div class='container-fluid'>
+        <div className='container-fluid'>
             <Header />
             {!gameStarted ?
                 <div id="menu-container" >
-                    <div class='color-white'>
+                    <div className='color-white'>
                         <h1>Welcome!</h1>
                     </div>
                     <div>

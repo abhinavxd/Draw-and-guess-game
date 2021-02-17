@@ -3,7 +3,7 @@ import "../css/playerList.css";
 const PlayerList = () => {
     return (
         <Fragment>
-            <div class='player'>
+            <div className='player'>
                 <div>
                     Abhinav
                 </div>
