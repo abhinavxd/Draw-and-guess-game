@@ -1,4 +1,5 @@
-const io, gameSocket;
+let io;
+let gameSocket;
 const initGame = (io_, socket) => {
     io = io_;
     gameSocket = socket;
