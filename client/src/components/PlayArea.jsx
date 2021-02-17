@@ -152,7 +152,7 @@ const PlayArea = () => {
     }, [soc])
 
     return (
-        <div class='gameScreen'>
+        <div className='gameScreen'>
             <TopGameHeader />
             <div className="parentContainer">
                 <div id='playerList'>
