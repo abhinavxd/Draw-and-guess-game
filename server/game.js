@@ -1,18 +1,18 @@
 let io;
 let gameSocket;
-const initGame = (io_, socket) => {
+exports.initGame = (io_, socket) => {
     io = io_;
     gameSocket = socket;
 
     // server events
-    gameSocket.on('createNewGame', hostCreateNewGame);
+    // gameSocket.on('createNewGame', hostCreateNewGame);
     // gameSocket.on('hostRoomFull', hostCreateNewGame);
     // gameSocket.on('hostCountDownFinished', hostCreateNewGame);
     // gameSocket.on('hostNextRound', hostCreateNewGame);
 
     gameSocket.on('cords', handlePlayerCoordinates);
     gameSocket.on('new_message', handleNewMessage);
-    gameSocket.on('erase', handlePlayerEraseAction);
+    // gameSocket.on('erase', handlePlayerEraseAction);
 }
 
 const handlePlayerCoordinates = (data) => {
@@ -22,5 +22,3 @@ const handlePlayerCoordinates = (data) => {
 const handleNewMessage = (data) => {
     io.sockets.emit('new_message', { msg: data.msg });
 };
-
-module.exports.initGame;
