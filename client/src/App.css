@@ -9,3 +9,8 @@ body {
   background-image: url(https://i.imgur.com/ODWmbHM.jpeg);
   font-family: 'Bungee Inline', cursive;
 }
+
+input {
+  outline: none;
+  border-radius: 5px;
+}
