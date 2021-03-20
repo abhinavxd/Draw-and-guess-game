@@ -3,4 +3,6 @@
     margin-bottom: 8px;
     background-color: #eee;
     line-height: 54px;
+    display: flex;
+    justify-content: space-evenly;
 }
