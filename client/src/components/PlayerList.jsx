@@ -1,15 +1,19 @@
 import { Fragment } from "react";
 import "../css/playerList.css";
-const PlayerList = () => {
+const PlayerList = (props) => {
     return (
         <Fragment>
             <div className='player'>
-                <div>
-                    Abhinav
-                </div>
-                <div>
-                    Points: 599
-                </div>
+                {props.players.map((player, index) => (
+                    <Fragment key={index}>
+                        <div>
+                            {player.username}
+                        </div>
+                        <div>
+                            Score: {player.score}
+                        </div>
+                    </Fragment>
+                ))}
             </div>
         </Fragment>
     )
