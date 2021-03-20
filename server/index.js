@@ -1,4 +1,3 @@
-// require("./db/database.js");
 require('dotenv').config();
 const consola = require("consola");
 const express = require('express');
