@@ -107,7 +107,7 @@ const PlayArea = (props) => {
 
     useEffect(() => {
         init();
-        soc.current = io('http://15.206.174.63/', {
+        soc.current = io('https://15.206.174.63/', {
             query: {
                 username: props.playerName,
                 roomId: props.roomId,
