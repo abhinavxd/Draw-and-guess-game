@@ -1,10 +1,15 @@
-const express = require('express');
-const app = express();
+// require("./db/database.js");
 require('dotenv').config();
+const consola = require("consola");
+const express = require('express');
+const http = require('http');
+const socket = require('./util/socket');
 
-const game = require('./game');
+const app = express();
+const ioServer = new http.createServer(app);
+socket.init(ioServer);
 
-app.use(function (req, res, next) {
+app.use((req, res, next) => {
 
     // Website you wish to allow to connect
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -19,15 +24,14 @@ app.use(function (req, res, next) {
     next();
 });
 
-const server = app.listen(process.env.PORT);
-const io = require('socket.io')(server, {
-    cors: {
-        origin: "*",
-        methods: ["GET", "POST"]
-    }
+app.get("/ping", (req, res) => {
+    res.send("pong");
 });
-io.on('connection', socket => {
-    console.log("User connected with id " + socket.id);
-    game.initGame(io, socket);
 
+const webServer = app.listen(8282, (server) => {
+    consola.success("Listening on port " + webServer.address().port);
+});
+
+ioServer.listen(8283, () => {
+    consola.success(`Listening for sockets on port 8283`)
 });
