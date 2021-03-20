@@ -1,9 +1,10 @@
 import "../css/topGameHeader.css";
-const TopGameHeader = () => {
+const TopGameHeader = (props) => {
     return (
         <div className='top-bar-game'>
+            <div>{props.gameId !== undefined ? (<div>Your room id is {props.gameId}</div>) : ("")} </div>
             <div id="current-word">
-                _ _ _ _ _ _
+                {props.currentWord}
             </div>
         </div>
     );
