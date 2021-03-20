@@ -107,7 +107,7 @@ const PlayArea = (props) => {
 
     useEffect(() => {
         init();
-        soc.current = io('https://15.206.174.63/', {
+        soc.current = io(process.env.REACT_APP_API_URL, {
             query: {
                 username: props.playerName,
                 roomId: props.roomId,
