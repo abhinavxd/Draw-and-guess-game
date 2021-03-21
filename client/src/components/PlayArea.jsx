@@ -102,7 +102,6 @@ const PlayArea = (props) => {
 
     const erase = () => {
         ctx.current.clearRect(0, 0, w.current, h.current);
-        soc.current.emit('erase');
     }
 
     useEffect(() => {
@@ -154,10 +153,12 @@ const PlayArea = (props) => {
                 setPlayersList(data.clients)
             });
             soc.current.on('clear-board-and-current-word', (data) => {
+                erase()
                 setCurrentWord(undefined);
             });
             soc.current.on('game-over', (data) => {
                 setGameOver(true);
+                showScoreBoard(true);
                 setScoreBoard(data.clients);
             });
             soc.current.on('room-id', (data) => {
