@@ -7,6 +7,9 @@ redisClient.on("error", function (error) {
     consola.error("Redis client connection failure " + error);
 });
 
+var nextTimerIndex = 0;
+var timerMap = {};
+
 /**
  * Class for managing game rooms
  */
@@ -48,7 +51,9 @@ exports.Room = class {
                     this.broadcastAllConnectedClients(updatedState);
                     this.shiftTurns(updatedState)
                     let timeoutId = setTimeout(this.gameLoop, 60000, updatedState)
-                    updatedState.game_state.timeout_id = timeoutId
+                    timerMap[nextTimerIndex] = timeoutId;
+                    updatedState.game_state.timeout_id = nextTimerIndex
+                    nextTimerIndex++;
                     redisClient.set(this.roomId, JSON.stringify(updatedState), (err, reply) => {
                         if (err) {
                             consola.error(`Error in setting key in redis! ${err}`)
@@ -75,7 +80,9 @@ exports.Room = class {
                 if (roomState.clients.length > 1 && roomState.game_state.game_started === false) {
                     consola.success('Can start game more than 1 client connected')
                     let timeoutId = setTimeout(this.gameLoop, 3000, roomState)
-                    roomState.game_state.timeout_id = timeoutId
+                    timerMap[nextTimerIndex] = timeoutId;
+                    roomState.game_state.timeout_id = nextTimerIndex
+                    nextTimerIndex++;
                     redisClient.set(this.roomId, JSON.stringify(roomState), (err, reply) => {
                         if (err) {
                             consola.error(`Error in setting key in redis! ${err}`)
@@ -265,7 +272,7 @@ exports.Room = class {
                                 return;
                             }
                             if (haveAllPlayersGuessed) {
-                                clearTimeout(roomState.game_state.timeout_id)
+                                clearTimeout(timerMap[roomState.game_state.timeout_id])
                                 consola.success('Clearing timeout ', roomState.game_state.timeout_id)
                                 this.broadcastAllConnectedClients(roomState);
                                 setTimeout(this.gameLoop, 5000, roomState)
