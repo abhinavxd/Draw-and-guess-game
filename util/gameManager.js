@@ -75,13 +75,13 @@ exports.Room = class {
                 if (roomState.clients.length > 1 && roomState.game_state.game_started === false) {
                     consola.success('Can start game more than 1 client connected')
                     let timeoutId = setTimeout(this.gameLoop, 3000, roomState)
-                    updatedState.game_state.timeout_id =
-                        redisClient.set(this.roomId, JSON.stringify(updatedState), (err, reply) => {
-                            if (err) {
-                                consola.error(`Error in setting key in redis! ${err}`)
-                                return;
-                            }
-                        });
+                    roomState.game_state.timeout_id = timeoutId
+                    redisClient.set(this.roomId, JSON.stringify(updatedState), (err, reply) => {
+                        if (err) {
+                            consola.error(`Error in setting key in redis! ${err}`)
+                            return;
+                        }
+                    });
                 } else {
                     consola.info('Not enough players');
                 }
