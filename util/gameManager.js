@@ -112,6 +112,9 @@ exports.Room = class {
      */
     shiftTurns = (roomState) => {
         // Select player with minimum play_count
+        if (!roomState.clients || roomState.clients.length === 0) {
+            return;
+        }
         let selectedPlayer = roomState.clients.reduce(function (prev, curr) {
             return prev.play_count < curr.play_count ? prev : curr;
         });
