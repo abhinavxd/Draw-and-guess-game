@@ -280,6 +280,7 @@ exports.Room = class {
                             consola.success(`HAVE ALL PLAYERS GUESSED `, haveAllPlayersGuessed)
                         });
                     } else {
+                        data.msg = this.username + ": " + data.msg
                         this.io.in(this.roomId).emit('new_message', { msg: data.msg })
                     }
                 }
