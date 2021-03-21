@@ -249,11 +249,11 @@ exports.Room = class {
                     }
                     if (current_word === data.msg && current_word !== undefined) {
                         let currentClientIndex = roomState.clients.findIndex(client => client.socket_id === this.socket.id)
-                        roomState.clients[currentClientIndex].score = Number(roomState.clients[currentClientIndex].score) + 1
                         // if this user has guessed word in this round return
                         if (roomState.clients[currentClientIndex].has_guessed_word) {
                             return;
                         }
+                        roomState.clients[currentClientIndex].score = Number(roomState.clients[currentClientIndex].score) + 1
                         roomState.clients[currentClientIndex].has_guessed_word = true;
                         this.io.in(this.roomId).emit('correct-answer', { username: this.username })
 
