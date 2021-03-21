@@ -158,7 +158,7 @@ const PlayArea = (props) => {
             });
             soc.current.on('game-over', (data) => {
                 setGameOver(true);
-                showScoreBoard(true);
+                setShowScoreBoard(true);
                 setScoreBoard(data.clients);
             });
             soc.current.on('room-id', (data) => {
