@@ -181,6 +181,14 @@ const PlayArea = (props) => {
                     return newState;
                 });
             });
+            soc.current.on('system-message', data => {
+                setChatMessages((prevState) => {
+                    let newState = [...prevState];
+                    let inputMessage = data.msg
+                    newState.push(inputMessage);
+                    return newState;
+                });
+            });
         }
     }, [soc])
 
