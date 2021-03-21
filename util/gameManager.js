@@ -116,6 +116,7 @@ exports.Room = class {
             return prev.play_count < curr.play_count ? prev : curr;
         });
         consola.success('Current player! ', selectedPlayer);
+        this.io.in(this.roomId).emit('system-message', { msg: selectedPlayer.username + " is drawing" })
         const wordListFromDb = words['words']
         // Now get words selected previous in this game
         // And select a word which has not been selected previously
