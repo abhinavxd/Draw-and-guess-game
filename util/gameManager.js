@@ -47,7 +47,14 @@ exports.Room = class {
                     await new Promise(resolve => setTimeout(resolve, 5000))
                     this.broadcastAllConnectedClients(updatedState);
                     this.shiftTurns(updatedState)
-                    this.timeoutId = setTimeout(this.gameLoop, 60000, updatedState)
+                    let timeoutId = setTimeout(this.gameLoop, 60000, updatedState)
+                    updatedState.game_state.timeout_id = timeoutId
+                    redisClient.set(this.roomId, JSON.stringify(updatedState), (err, reply) => {
+                        if (err) {
+                            consola.error(`Error in setting key in redis! ${err}`)
+                            return;
+                        }
+                    });
                 });
             }
         })
@@ -67,7 +74,14 @@ exports.Room = class {
             if (roomState) {
                 if (roomState.clients.length > 1 && roomState.game_state.game_started === false) {
                     consola.success('Can start game more than 1 client connected')
-                    setTimeout(this.gameLoop, 3000, roomState)
+                    let timeoutId = setTimeout(this.gameLoop, 3000, roomState)
+                    updatedState.game_state.timeout_id =
+                        redisClient.set(this.roomId, JSON.stringify(updatedState), (err, reply) => {
+                            if (err) {
+                                consola.error(`Error in setting key in redis! ${err}`)
+                                return;
+                            }
+                        });
                 } else {
                     consola.info('Not enough players');
                 }
@@ -168,7 +182,8 @@ exports.Room = class {
                     consumed_words: [],
                     game_started: false,
                     current_word: '',
-                    current_player: ''
+                    current_player: '',
+                    timeout_id: undefined
                 },
                 clients: [
                     {
@@ -250,8 +265,8 @@ exports.Room = class {
                                 return;
                             }
                             if (haveAllPlayersGuessed) {
-                                clearTimeout(this.timeoutId)
-                                consola.success('Clearing timeout ', this.timeoutId)
+                                clearTimeout(roomState.game_state.timeout_id)
+                                consola.success('Clearing timeout ', roomState.game_state.timeout_id)
                                 this.broadcastAllConnectedClients(roomState);
                                 setTimeout(this.gameLoop, 5000, roomState)
                             }
