@@ -34,6 +34,7 @@ const HomePage = () => {
                     </div>
                     <br></br>
                     <button type='button' className='btn btn-success' onClick={startGameHandler}>Play</button>
+                    <h5>v1.0.1</h5>
                 </div> : <PlayArea roomId={roomId} playerName={playerName} action={action} />}
         </div>
     );
