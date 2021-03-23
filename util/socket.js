@@ -7,8 +7,7 @@ const redisClient = redis.createClient();
 exports.init = (httpServer) => {
     const io = new Server(httpServer, {
         cors: {
-            origin: "*",
-            methods: ["GET", "POST"]
+            origin: "*"
         }
     });
     io.on('connection', socket => {
