@@ -11,7 +11,7 @@ exports.init = (httpServer) => {
             methods: ["GET", "POST"]
         }
     });
-    console.log("Init socket ");
+    io.of('/socket')
     io.on('connection', socket => {
         consola.info("Socket connected  with " + socket.id);
         let { username, roomId, action } = socket.handshake.query;
