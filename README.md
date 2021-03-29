@@ -1,7 +1,7 @@
 # Draw-and-guess-game (v1.0.1)
-Play here http://47b9919d6be4.in.ngrok.io/
+Play here http://15.207.20.69/
 
-Each players gets a word which the player has to draw on the canvas while other players guess the word by typing it in the chat box each correct guess gives the player 1 point, Player with maximum points wins!
+In each round a player gets a word and has to draw on the canvas while other players guess the word by typing it in the chat box each correct guess gives that player 1 point, Player with maximum points wins!
 
 Uses Socket.IO and Redis for game state management, supports multiple game lobbies.
 
