@@ -9,6 +9,6 @@ Uses Socket.IO and Redis for game state management, supports multiple game lobbi
 
 ![Word selection](https://project-bucket-be.s3.ap-south-1.amazonaws.com/Screenshot+from+2021-04-02+03-15-43.png)
 
-![Game image](https://project-bucket-be.s3.ap-south-1.amazonaws.com/Screenshot+from+2021-04-02+03-15-17.png)
-
+![Game image](https://project-bucket-be.s3.ap-south-1.amazonaws.com/Screenshot+from+2021-04-02+03-17-09.png)
+PS. Ignore my drawing skills
 
