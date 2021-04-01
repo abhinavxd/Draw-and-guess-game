@@ -2,9 +2,12 @@
   text-align: center;
 }
 
+* {
+  font-family: 'Roboto Slab', serif;
+}
+
 body {
   background-image: url(https://i.imgur.com/ODWmbHM.jpeg);
-  font-family: 'Roboto Slab', serif;
 }
 
 input {
