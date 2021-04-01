@@ -132,6 +132,9 @@ const PlayArea = (props) => {
             setShowScoreBoard(false)
             setshowNewWordOverlay(true)
         });
+        soc.current.on('hidden-word', (data) => {
+            setCurrentWord(data.word);
+        });
         soc.current.on('current-turn', (data) => {
             setStartTimer(true);
             console.log('Current turn ', data.username);
@@ -140,8 +143,7 @@ const PlayArea = (props) => {
         });
         soc.current.on('round-over', (data) => {
             setScoreBoard(data.clients);
-            setShowScoreBoard(true);
-            setshowNewWordOverlay(false);
+            setShowScoreBoard(!showScoreBoard);
         });
     }, [init, props.playerName, props.roomId, props.action]);
 
@@ -247,13 +249,13 @@ const PlayArea = (props) => {
                     <i onClick={hideOverlay} className='fas fa-times close-overlay'></i>
                     <div>
                         <div>
-                            SCORE BOARD
+                            {!isGameOver ? 'Round over' : 'Game over final score board'}
                         </div>
                         {scoreBoard.map((client, index) => (
                             <div key={index}>
                                 {isGameOver ? (
                                     <div>
-                                        {index + 1} {client.username} : {client.score}
+                                        #{index + 1} {client.username} : {client.score}
                                     </div>
                                 ) : (
                                     <div>
