@@ -1,11 +1,13 @@
 import "./../css/chat.css";
 import { Fragment, useEffect, useRef } from "react";
 const Chat = (props) => {
-
     const chatScrollDiv = useRef();
+
+    /**
+     * Fn to scroll chat div to bottom
+     */
     const scrollToBottom = () => {
         if (chatScrollDiv.current) {
-            console.log('scroll down!!');
             chatScrollDiv.current.scrollTo(
                 0,
                 chatScrollDiv.current.scrollHeight
@@ -13,6 +15,9 @@ const Chat = (props) => {
         }
     };
 
+    /**
+     * Call scrollToBottom function on every new message
+     */
     useEffect(() => {
         scrollToBottom();
     }, [props.chatMessages]);
@@ -20,11 +25,9 @@ const Chat = (props) => {
     return (
         <Fragment>
             <div className="chats" ref={chatScrollDiv}>
-                {props.chatMessages.length > 0 ? (props.chatMessages.map((item, index) => (
+                {!!props.chatMessages.length && (props.chatMessages.map((item, index) => (
                     <p key={index}>{item}</p>
-                ))) :
-                    ("")
-                }
+                )))}
             </div>
             <form id="chatInput" onSubmit={props.handleNewMessage}>
                 <input onChange={props.handleChangeMessage} value={props.inputBarText} className="form-control" id="inputChat" autoComplete="off" type="text" placeholder="Type your guess here.." maxLength="100" />
