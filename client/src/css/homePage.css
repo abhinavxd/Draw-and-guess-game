@@ -1,9 +1,11 @@
 #menu-container {
-    padding:15px;
+    padding:20px;
     position: relative;
-    top:100px;
-    width:330px;
+    top:2em;
+    width:17em;
     margin:auto auto;
     background-color: rgba(59,130,246,0.5);
-    border-radius: 5px;
+    border-radius: 3px;
+    font-size: 2.3em;
+    color:white;
 }

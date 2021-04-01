@@ -11,8 +11,8 @@
     position: absolute;
     left: 0;
     right: 0;
-    top: 100%;
-    margin-top: 8px;
+    top: 80%;
+    margin-top: 10px;
 }
 
 #chatContainer {  
@@ -29,6 +29,8 @@
     background-color: white;
     min-width: 190px;
     margin: 0px 6px 0px 0px;
+    border:1px solid #eee;
+    border-radius: 3px;
 }
 
 #can {
@@ -41,7 +43,6 @@
 }
 
 .gameScreen {
-    margin:0px 100px;
     margin-bottom: 64px;
     display: flex;
     flex-direction: column;

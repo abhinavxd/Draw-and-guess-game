@@ -1,7 +1,12 @@
-.player {
-    border-bottom: 1px solid grey;
+.player-data-container {
+    border:1px solid #eee;
+    border-radius: 3px;
 }
 
-.player:nth-child(odd) {
+.player-data-container:nth-child(odd) {
     background-color: #EEE;
+}
+
+.player-data {
+    border-bottom: 1px solid lightblue;
 }
