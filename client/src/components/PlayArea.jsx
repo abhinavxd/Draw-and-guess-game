@@ -6,6 +6,7 @@ import PlayerList from './PlayerList';
 import TopGameHeader from './TopGameHeader';
 
 const PlayArea = (props) => {
+    // Game state
     const [curGameId, setGameId] = useState(undefined);
     const [currentWord, setCurrentWord] = useState(undefined);
     const [showNewWordOverlay, setshowNewWordOverlay] = useState(false);
@@ -13,11 +14,11 @@ const PlayArea = (props) => {
     const [scoreBoard, setScoreBoard] = useState([]);
     const [showScoreBoard, setShowScoreBoard] = useState(false);
     const [isGameOver, setGameOver] = useState(false);
+    const [startTimer, setStartTimer] = useState(false);
 
     // Chat state
     const [chatMessages, setChatMessages] = useState([]);
     const [inputBarText, setInputBarText] = useState("");
-
 
     let soc = useRef(null);
     let isCurrentPlayersTurn = useRef(false);
@@ -34,8 +35,6 @@ const PlayArea = (props) => {
 
     let x = useRef("black");
     let y = useRef(3);
-
-
 
     const findxy = useCallback((res, e) => {
         if (!isCurrentPlayersTurn.current) {
@@ -100,9 +99,20 @@ const PlayArea = (props) => {
         ctx.current.closePath();
     }
 
+    /**
+     * Clear canvas drawings
+     */
     const erase = () => {
         ctx.current.clearRect(0, 0, w.current, h.current);
     }
+
+    /**
+     * Emit erase event to all sockets in this room
+     */
+    const emitErase = () => {
+        soc.current.emit('erase');
+        erase();
+    };
 
     useEffect(() => {
         init();
@@ -123,6 +133,7 @@ const PlayArea = (props) => {
             setshowNewWordOverlay(true)
         });
         soc.current.on('current-turn', (data) => {
+            setStartTimer(true);
             console.log('Current turn ', data.username);
             isCurrentPlayersTurn.current = false;
             setChatMessages([]);
@@ -214,7 +225,6 @@ const PlayArea = (props) => {
         setInputBarText("");
     };
 
-
     const handleChangeMessage = (e) => {
         setInputBarText(e.target.value)
     }
@@ -255,7 +265,7 @@ const PlayArea = (props) => {
                     </div>
                 </div>
             </div>}
-            <TopGameHeader gameId={curGameId} currentWord={currentWord} />
+            <TopGameHeader gameId={curGameId} currentWord={currentWord} startTimer={startTimer} setStartTimer={setStartTimer} />
             < div className="parentContainer">
                 <div id='playerList'>
                     <PlayerList players={playersList} />
@@ -267,9 +277,9 @@ const PlayArea = (props) => {
                     <Chat chatMessages={chatMessages} inputBarText={inputBarText} handleNewMessage={handleNewMessage} handleChangeMessage={handleChangeMessage}
                     />
                 </div>
-                {/* <div className='containerToolBar'>
-                    <button onClick={erase}>Erase</button>
-                </div> */}
+                <div className='containerToolBar'>
+                    <button type='button' className='btn btn-success' onClick={emitErase}>Erase</button>
+                </div>
             </div >
         </div>
     );
