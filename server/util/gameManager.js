@@ -7,8 +7,9 @@ redisClient.on("error", function (error) {
     consola.error("Redis client connection failure " + error);
 });
 
-var nextTimerIndex = 0;
-var timerMap = {};
+const MAX_ROUNDS_PER_MATCH = 10
+let nextTimerIndex = 0
+let timerMap = {}
 
 /**
  * Class for managing game rooms and room events
@@ -34,19 +35,24 @@ exports.Room = class {
             }
             const updatedState = JSON.parse(reply);
             consola.success('Rounds -> ', updatedState.game_state.round_no, "  ", updatedState.game_state.max_rounds);
-            // Set has_guessed_word to true for all clients for fresh round
+            // Set has_guessed_word to false for all clients for fresh round
             for (let index = 0; index < updatedState.clients.length; index++) {
                 updatedState.clients[index].has_guessed_word = false;
             }
+            // CHECK if game is over or not and send game-over event if the game's over
             if (updatedState.game_state.round_no >= updatedState.game_state.max_rounds) {
-                this.io.emit('game-over', { clients: updatedState.clients })
+                this.io.in(`${roomState.game_state.room_id}`).emit('game-over', { clients: updatedState.clients })
                 redisClient.del(updatedState.game_state.room_id)
             } else {
                 redisClient.set(this.roomId, JSON.stringify(updatedState), async (err, reply) => {
                     if (err) {
-                        consola.error(`Error in setting key in redis! ${err}`)
+                        consola.error(`Error in setting value in redis! ${err}`)
                         return;
                     }
+                    if (updatedState.game_state.round_no > 0)
+                        this.io.in(`${roomState.game_state.room_id}`).emit('round-over', { clients: updatedState.clients })
+
+                    // Wait for 5 seconds before starting a round
                     await new Promise(resolve => setTimeout(resolve, 5000))
                     this.broadcastAllConnectedClients(updatedState);
                     this.shiftTurns(updatedState)
@@ -56,7 +62,7 @@ exports.Room = class {
                     nextTimerIndex++;
                     redisClient.set(this.roomId, JSON.stringify(updatedState), (err, reply) => {
                         if (err) {
-                            consola.error(`Error in setting key in redis! ${err}`)
+                            consola.error(`Error in setting value in redis ${err}`)
                             return;
                         }
                     });
@@ -78,8 +84,8 @@ exports.Room = class {
             this.broadcastRoomId(this.roomId);
             if (roomState) {
                 if (roomState.clients.length > 1 && roomState.game_state.game_started === false) {
-                    consola.success('Can start game more than 1 client connected')
-                    let timeoutId = setTimeout(this.gameLoop, 3000, roomState)
+                    consola.success(`Starting game ${this.roomId} more than 1 client connected`)
+                    let timeoutId = setTimeout(this.gameLoop, 1000, roomState)
                     timerMap[nextTimerIndex] = timeoutId;
                     roomState.game_state.timeout_id = nextTimerIndex
                     nextTimerIndex++;
@@ -97,7 +103,7 @@ exports.Room = class {
     }
 
     /**
-     * Emit room id to clients
+     * Emit the players room id to all clients
      * 
      * @param {String} roomId
      */
@@ -106,7 +112,7 @@ exports.Room = class {
     };
 
     /**
-     * Listen to erase event
+     * Listen to canvas erase event
      */
     listenToErase = () => {
         this.socket.on('erase', () => {
@@ -127,8 +133,7 @@ exports.Room = class {
         let selectedPlayer = roomState.clients.reduce(function (prev, curr) {
             return prev.play_count < curr.play_count ? prev : curr;
         });
-        consola.success('Current player! ', selectedPlayer);
-        this.io.in(this.roomId).emit('system-message', { msg: selectedPlayer.username + " is drawing" })
+        consola.success('Current player ', selectedPlayer);
         const wordListFromDb = words['words']
         // Now get words selected previous in this game
         // And select a word which has not been selected previously
@@ -152,12 +157,17 @@ exports.Room = class {
             }
             this.io.to(roomState.game_state.room_id).emit('clear-board-and-current-word');
             this.io.to(roomState.game_state.room_id).emit('current-turn', { username: selectedPlayer.username })
+            // replace every alphabet in the string with underscore for players which are not drawing
+            this.io.to(roomState.game_state.room_id).emit('hidden-word', { word: unconsumedWords[0].replace(/[a-z]/g, '_') })
             this.io.to(selectedPlayer.socket_id).emit('new-word', { word: unconsumedWords[0], to_socket_id: selectedPlayer.socket_id })
+            this.io.in(roomState.game_state.room_id).emit('system-message', { msg: `${selectedPlayer.username} is drawing` })
         });
     }
 
     /**
-     * Initialises steps on first connection.
+     * Initialises steps on first connection 
+     * Creates a new room if it's a create request and joins the socket to the room
+     * Joins socket to room if it's a join request
      *
      * @access  public
      */
@@ -198,7 +208,7 @@ exports.Room = class {
                 game_state: {
                     room_id: this.roomId,
                     round_no: 0,
-                    max_rounds: 10,
+                    max_rounds: MAX_ROUNDS_PER_MATCH,
                     consumed_words: [],
                     game_started: false,
                     current_word: '',
