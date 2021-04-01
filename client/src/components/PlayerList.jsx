@@ -3,16 +3,16 @@ import "../css/playerList.css";
 const PlayerList = (props) => {
     return (
         <Fragment>
-            <div className='player'>
+            <div className='player-data-container'>
                 {props.players.map((player, index) => (
-                    <Fragment key={index}>
+                    <div key={index} className='player-data'>
                         <div>
-                            {player.username}
+                            <b>{player.username}</b>
                         </div>
                         <div>
-                            Score: {player.score}
+                            Score: <b>{player.score}</b>
                         </div>
-                    </Fragment>
+                    </div>
                 ))}
             </div>
         </Fragment>
