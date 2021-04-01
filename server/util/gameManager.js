@@ -11,7 +11,7 @@ var nextTimerIndex = 0;
 var timerMap = {};
 
 /**
- * Class for managing game rooms
+ * Class for managing game rooms and room events
  */
 exports.Room = class {
     constructor(options) {
@@ -104,6 +104,15 @@ exports.Room = class {
     broadcastRoomId = (roomId) => {
         this.io.in(roomId).emit('room-id', { id: roomId });
     };
+
+    /**
+     * Listen to erase event
+     */
+    listenToErase = () => {
+        this.socket.on('erase', () => {
+            this.socket.to(this.roomId).emit('erase');
+        });
+    }
 
     /**
      * Shift turns evenly between players
@@ -220,7 +229,7 @@ exports.Room = class {
     }
 
     /**
-     * Listen to draw coordinates
+     * Listen to draw coordinates and emit them
      */
     listenCords = () => {
         this.socket.on('cords', (data) => {
