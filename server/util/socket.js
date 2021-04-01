@@ -1,8 +1,6 @@
 const { Server } = require("socket.io");
 const consola = require('consola');
 const gameManager = require('./gameManager');
-const redis = require("redis");
-const redisClient = redis.createClient();
 
 exports.init = (httpServer) => {
     const io = new Server(httpServer, {
@@ -19,6 +17,7 @@ exports.init = (httpServer) => {
         room.listenCords();
         room.listenToMessages();
         room.onDisconnect();
+        room.listenToErase();
     });
 
 }
