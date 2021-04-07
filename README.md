@@ -1,7 +1,7 @@
 # Draw-and-guess-game (v1.0.3)
 Play here http://drawandguess.xyz/
 
-Turn based multiplayer game, Each player gets a word and has to draw to it on the canvas, while others guess by typing that word in the chat.
+Turn based multiplayer game, Each player gets a word and has to draw to it on the canvas, while other players guess that word by typing it in the chat.
 
 Uses Socket.IO and Redis for game state management, supports multiple game lobbies.
 
