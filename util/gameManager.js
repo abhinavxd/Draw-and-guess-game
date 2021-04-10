@@ -54,7 +54,7 @@ exports.Room = class {
                         return;
                     }
                     if (updatedState.game_state.round_no > 0)
-                        this.io.in(`${roomState.game_state.room_id}`).emit('round-over', { clients: updatedState.clients })
+                        this.io.in(`${roomState.game_state.room_id}`).emit('round-over', { clients: updatedState.clients, cur_word: updatedState.game_state.current_word })
 
                     // Wait for 5 seconds before starting a round
                     await new Promise(resolve => setTimeout(resolve, 5000))
