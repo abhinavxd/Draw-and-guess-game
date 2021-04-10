@@ -1,3 +1,7 @@
+// TODO:: USE PROMISES INSTEAD OF CALLBACKS
+// Node Redis currently doesn't natively support promises
+// Wrap the methods with promises using built-in-Node.js util.promisify
+
 const redis = require("redis");
 const redisClient = redis.createClient();
 const crypto = require("crypto");
@@ -12,7 +16,7 @@ let nextTimerIndex = 0
 let timerMap = {}
 
 /**
- * Class for managing game rooms and room events
+ * Class for managing game rooms and room related events
  */
 exports.Room = class {
     constructor(options) {
@@ -24,7 +28,7 @@ exports.Room = class {
     }
 
     /**
-     * Main game loop
+     * Main game loop for starting rounds and sending game-over event 
      * 
      * @param {Object} roomState 
      */
@@ -103,7 +107,7 @@ exports.Room = class {
     }
 
     /**
-     * Emit the players room id to all clients
+     * Emit room id to all clients in this room
      * 
      * @param {String} roomId
      */
@@ -112,7 +116,7 @@ exports.Room = class {
     };
 
     /**
-     * Listen to canvas erase event
+     * Listen to canvas erase event and emit this to all clients in this room
      */
     listenToErase = () => {
         this.socket.on('erase', () => {
@@ -168,8 +172,8 @@ exports.Room = class {
 
     /**
      * Initialises steps on first connection 
-     * Creates a new room if it's a create request and joins the socket to the room
-     * Joins socket to room if it's a join request
+     * 1. Creates a new room if it's a create request and joins the socket to the room
+     * 2. Joins socket to room if it's a join request
      *
      * @access  public
      */
@@ -241,7 +245,7 @@ exports.Room = class {
     }
 
     /**
-     * Listen to draw coordinates and emit them
+     * Listen to draw coordinates and emit them to all clients in room
      */
     listenCords = () => {
         this.socket.on('cords', (data) => {
@@ -250,7 +254,7 @@ exports.Room = class {
     }
 
     /**
-     * Listen to messages and broadcast them
+     * Listen to messages and broadcast them to all clients
      */
     listenToMessages = () => {
         this.socket.on('new_message', (data) => {
@@ -272,9 +276,11 @@ exports.Room = class {
                         consola.info(`Player has already guessed`)
                         return;
                     }
+                    // If the guess is correct do not emit the message
+                    // Instead emit `Player X has guessed the word`
                     if (current_word === data.msg && current_word !== undefined) {
                         let currentClientIndex = roomState.clients.findIndex(client => client.socket_id === this.socket.id)
-                        // if this user has guessed word in this round return
+                        // if this user has guessed word in this round do not emit message
                         if (roomState.clients[currentClientIndex].has_guessed_word) {
                             return;
                         }
@@ -305,6 +311,7 @@ exports.Room = class {
                             consola.success(`HAVE ALL PLAYERS GUESSED `, haveAllPlayersGuessed)
                         });
                     } else {
+                        // Incorrect guess emit the message
                         data.msg = this.username + ": " + data.msg
                         this.io.in(this.roomId).emit('new_message', { msg: data.msg })
                     }
@@ -338,7 +345,8 @@ exports.Room = class {
     }
 
     /**
-     * Broadcast all connected clients to all clients
+     * Broadcast all connected clients to all clients in a room
+     * This function is in between every round to remove any clients that might have left the game
      * 
      * @param {Object} roomState 
      */
