@@ -139,7 +139,9 @@ exports.Room = class {
         // And select a word which has not been selected previously
         const consumedWords = roomState.game_state.consumed_words
         const unconsumedWords = wordListFromDb.filter(word => !consumedWords.includes(word))
-        const selectedWord = unconsumedWords[0]
+        // Pick a random word
+        const selectedWord = unconsumedWords[Math.floor(Math.random() * unconsumedWords.length)];
+        consola.info('Selected word ', selectedWord)
         roomState.game_state.consumed_words.push(selectedWord)
         roomState.game_state.round_no = Number(roomState.game_state.round_no) + 1
         roomState.game_state.game_started = true;
@@ -158,8 +160,8 @@ exports.Room = class {
             this.io.to(roomState.game_state.room_id).emit('clear-board-and-current-word');
             this.io.to(roomState.game_state.room_id).emit('current-turn', { username: selectedPlayer.username })
             // replace every alphabet in the string with underscore for players which are not drawing
-            this.io.to(roomState.game_state.room_id).emit('hidden-word', { word: unconsumedWords[0].replace(/[a-z]/g, '_') })
-            this.io.to(selectedPlayer.socket_id).emit('new-word', { word: unconsumedWords[0], to_socket_id: selectedPlayer.socket_id })
+            this.io.to(roomState.game_state.room_id).emit('hidden-word', { word: selectedWord.replace(/[a-z]/g, '_') })
+            this.io.to(selectedPlayer.socket_id).emit('new-word', { word: selectedWord, to_socket_id: selectedPlayer.socket_id })
             this.io.in(roomState.game_state.room_id).emit('system-message', { msg: `${selectedPlayer.username} is drawing` })
         });
     }
