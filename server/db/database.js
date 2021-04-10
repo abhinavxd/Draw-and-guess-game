@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const consola = require('consola');
 require('dotenv').config();
 
+// TODO:: Fetch words from database instead of json file in ../data/words.json file
 mongoose.connect(process.env.MONGODB_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true
