@@ -15,6 +15,8 @@ const PlayArea = (props) => {
     const [showScoreBoard, setShowScoreBoard] = useState(false);
     const [isGameOver, setGameOver] = useState(false);
     const [startTimer, setStartTimer] = useState(false);
+    // State to store word which was selected in previous round
+    const [roundEndWord, setRoundEndWord] = useState(undefined);
 
     // Chat state
     const [chatMessages, setChatMessages] = useState([]);
@@ -125,7 +127,6 @@ const PlayArea = (props) => {
         });
         soc.current.on('new-word', (data) => {
             if (soc.current.id === data.to_socket_id) {
-                console.log('My turn!')
                 isCurrentPlayersTurn.current = true;
             }
             setCurrentWord(data.word);
@@ -142,6 +143,7 @@ const PlayArea = (props) => {
             setChatMessages([]);
         });
         soc.current.on('round-over', (data) => {
+            setRoundEndWord(data.cur_word)
             setScoreBoard(data.clients);
             setShowScoreBoard(!showScoreBoard);
         });
@@ -248,6 +250,9 @@ const PlayArea = (props) => {
                 <div className='overlay-content'>
                     <i onClick={hideOverlay} className='fas fa-times close-overlay'></i>
                     <div>
+                        <div>
+                            {`The word was ${roundEndWord}`}
+                        </div>
                         <div>
                             {!isGameOver ? 'Round over' : 'Game over final score board'}
                         </div>
