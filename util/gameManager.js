@@ -1,4 +1,4 @@
-// TODO:: USE PROMISES INSTEAD OF CALLBACKS
+// TODO:: USE PROMISES in NODE REDIS INSTEAD OF CALLBACKS
 // Node Redis currently doesn't natively support promises
 // Wrap the methods with promises using built-in-Node.js util.promisify
 
@@ -32,39 +32,43 @@ exports.Room = class {
      * 
      * @param {Object} roomState 
      */
-    gameLoop = (roomState) => {
-        redisClient.get(roomState.game_state.room_id, async (err, reply) => {
+    gameLoop = ({ game_state }) => {
+        redisClient.get(game_state.room_id, async (err, reply) => {
             if (err) {
-                consola.error(`err fetching ${roomState.game_state.room_id} values ${err}`);
+                consola.error(`err fetching ${game_state.room_id} values ${err}`);
             }
-            const updatedState = JSON.parse(reply);
-            consola.success('Rounds -> ', updatedState.game_state.round_no, "  ", updatedState.game_state.max_rounds);
+            // const updatedState = JSON.parse(reply);
+            const updatedRoomState = JSON.parse(reply);
+            let { game_state: updatedGameState, clients: updatedRoomClients } = updatedRoomState;
+
+            consola.success('Rounds -> ', updatedGameState.round_no, "  ", updatedGameState.max_rounds);
             // Set has_guessed_word to false for all clients for fresh round
-            for (let index = 0; index < updatedState.clients.length; index++) {
-                updatedState.clients[index].has_guessed_word = false;
-            }
-            // CHECK if game is over or not and send game-over event if the game's over
-            if (updatedState.game_state.round_no >= updatedState.game_state.max_rounds) {
-                this.io.in(`${roomState.game_state.room_id}`).emit('game-over', { clients: updatedState.clients })
-                redisClient.del(updatedState.game_state.room_id)
+            updatedRoomClients.forEach((client) => {
+                client.has_guessed_word = false;
+            });
+
+            // CHECK if game is over or not and send `game-over` event if the game's over
+            if (updatedGameState.round_no >= updatedGameState.max_rounds) {
+                this.io.in(`${game_state.room_id}`).emit('game-over', { clients: updatedRoomClients })
+                redisClient.del(updatedGameState.room_id)
             } else {
-                redisClient.set(this.roomId, JSON.stringify(updatedState), async (err, reply) => {
+                redisClient.set(this.roomId, JSON.stringify(updatedRoomState), async (err, reply) => {
                     if (err) {
                         consola.error(`Error in setting value in redis! ${err}`)
                         return;
                     }
-                    if (updatedState.game_state.round_no > 0)
-                        this.io.in(`${roomState.game_state.room_id}`).emit('round-over', { clients: updatedState.clients, cur_word: updatedState.game_state.current_word })
+                    if (updatedGameState.round_no > 0)
+                        this.io.in(`${game_state.room_id}`).emit('round-over', { clients: updatedRoomClients, cur_word: updatedGameState.current_word })
 
                     // Wait for 5 seconds before starting a round
                     await new Promise(resolve => setTimeout(resolve, 5000))
-                    this.broadcastAllConnectedClients(updatedState);
-                    this.shiftTurns(updatedState)
-                    let timeoutId = setTimeout(this.gameLoop, 60000, updatedState)
+                    this.broadcastAllConnectedClients(updatedRoomState);
+                    this.shiftTurns(updatedRoomState)
+                    let timeoutId = setTimeout(this.gameLoop, 60000, updatedRoomState)
                     timerMap[nextTimerIndex] = timeoutId;
-                    updatedState.game_state.timeout_id = nextTimerIndex
+                    updatedGameState.timeout_id = nextTimerIndex
                     nextTimerIndex++;
-                    redisClient.set(this.roomId, JSON.stringify(updatedState), (err, reply) => {
+                    redisClient.set(this.roomId, JSON.stringify(updatedRoomState), (err, reply) => {
                         if (err) {
                             consola.error(`Error in setting value in redis ${err}`)
                             return;
@@ -76,7 +80,7 @@ exports.Room = class {
     }
 
     /**
-     * Starts the game if there are more than 2 players connected
+     * Starts the game if there are more than 2 players connected in a room
      */
     startGame = () => {
         redisClient.get(this.roomId, (err, reply) => {
@@ -84,14 +88,15 @@ exports.Room = class {
                 consola.error(`err fetching ${this.roomId} values ${err}`);
                 return;
             }
-            let roomState = JSON.parse(reply)
+            let roomState = JSON.parse(reply);
             this.broadcastRoomId(this.roomId);
             if (roomState) {
-                if (roomState.clients.length > 1 && roomState.game_state.game_started === false) {
+                let { clients, game_state } = roomState;
+                if (clients.length > 1 && game_state.game_started === false) {
                     consola.success(`Starting game ${this.roomId} more than 1 client connected`)
-                    let timeoutId = setTimeout(this.gameLoop, 1000, roomState)
+                    let timeoutId = setTimeout(this.gameLoop, 1000, roomState);
                     timerMap[nextTimerIndex] = timeoutId;
-                    roomState.game_state.timeout_id = nextTimerIndex
+                    game_state.timeout_id = nextTimerIndex;
                     nextTimerIndex++;
                     redisClient.set(this.roomId, JSON.stringify(roomState), (err, reply) => {
                         if (err) {
@@ -130,43 +135,46 @@ exports.Room = class {
      * @param {Object} roomState 
      */
     shiftTurns = (roomState) => {
-        // Select player with minimum play_count
-        if (!roomState.clients || roomState.clients.length === 0) {
+        let { clients, game_state: gameState } = roomState;
+        let { consumed_words: consumedWords } = gameState;
+        // Select player with minimum last_play_time
+        if (!clients || clients.length === 0) {
             return;
         }
-        let selectedPlayer = roomState.clients.reduce(function (prev, curr) {
-            return prev.play_count < curr.play_count ? prev : curr;
+        let selectedPlayer = clients.reduce(function (prev, curr) {
+            return prev.last_play_time < curr.last_play_time ? prev : curr;
         });
         consola.success('Current player ', selectedPlayer);
         const wordListFromDb = words['words']
         // Now get words selected previous in this game
         // And select a word which has not been selected previously
-        const consumedWords = roomState.game_state.consumed_words
         const unconsumedWords = wordListFromDb.filter(word => !consumedWords.includes(word))
         // Pick a random word
         const selectedWord = unconsumedWords[Math.floor(Math.random() * unconsumedWords.length)];
         consola.info('Selected word ', selectedWord)
-        roomState.game_state.consumed_words.push(selectedWord)
-        roomState.game_state.round_no = Number(roomState.game_state.round_no) + 1
-        roomState.game_state.game_started = true;
-        roomState.game_state.current_word = selectedWord;
-        roomState.game_state.current_player = selectedPlayer.socket_id;
-        for (let index = 0; index < roomState.clients.length; index++) {
-            if (roomState.clients[index].socket_id === selectedPlayer.socket_id) {
-                roomState.clients[index].play_count = Number(roomState.clients[index].play_count) + 1
+        consumedWords.push(selectedWord)
+        gameState.round_no = Number(gameState.round_no) + 1;
+        gameState.game_started = true;
+        gameState.current_word = selectedWord;
+        gameState.current_player = selectedPlayer.socket_id;
+        // Set last_play_time to current epoch time
+        clients.forEach((client) => {
+            if (client.socket_id === selectedPlayer.socket_id) {
+                client.last_play_time = Date.now();
+                return;
             }
-        }
+        });
         // Now update to redis and emit new word
-        redisClient.set(roomState.game_state.room_id, JSON.stringify(roomState), (err, reply) => {
+        redisClient.set(gameState.room_id, JSON.stringify(roomState), (err, reply) => {
             if (err) {
-                consola.error(`Error redis set ${err}`)
+                consola.error(`Error redis set ${err}`);
             }
-            this.io.to(roomState.game_state.room_id).emit('clear-board-and-current-word');
-            this.io.to(roomState.game_state.room_id).emit('current-turn', { username: selectedPlayer.username })
-            // replace every alphabet in the string with underscore for players which are not drawing
-            this.io.to(roomState.game_state.room_id).emit('hidden-word', { word: selectedWord.replace(/[a-z]/g, '_') })
-            this.io.to(selectedPlayer.socket_id).emit('new-word', { word: selectedWord, to_socket_id: selectedPlayer.socket_id })
-            this.io.in(roomState.game_state.room_id).emit('system-message', { msg: `${selectedPlayer.username} is drawing` })
+            this.io.to(gameState.room_id).emit('clear-board-and-current-word');
+            this.io.to(gameState.room_id).emit('current-turn', { username: selectedPlayer.username });
+            // replace every alphabet in the string with underscore for players which are not drawing & emit this word
+            this.io.to(gameState.room_id).emit('hidden-word', { word: selectedWord.replace(/[a-z]/g, '_') });
+            this.io.to(selectedPlayer.socket_id).emit('new-word', { word: selectedWord, to_socket_id: selectedPlayer.socket_id });
+            this.io.in(gameState.room_id).emit('system-message', { msg: `${selectedPlayer.username} is drawing` });
         });
     }
 
@@ -186,11 +194,12 @@ exports.Room = class {
                 }
                 if (reply) {
                     let roomState = JSON.parse(reply);
+                    // Default data for each client
                     roomState.clients.push({
                         socket_id: this.socket.id,
                         username: this.username,
                         score: 0,
-                        play_count: 0,
+                        last_play_time: 0,
                         has_guessed_word: false
                     })
                     redisClient.set(this.roomId, JSON.stringify(roomState), (err, reply) => {
@@ -226,7 +235,7 @@ exports.Room = class {
                         socket_id: this.socket.id,
                         username: this.username,
                         score: 0,
-                        play_count: 0,
+                        last_play_time: 0,
                         has_guessed_word: false
                     }
                 ]
@@ -264,51 +273,54 @@ exports.Room = class {
                 }
                 if (reply) {
                     let roomState = JSON.parse(reply);
-                    let current_word = roomState.game_state.current_word;
+                    let { game_state, clients } = roomState;
+                    let { room_id, timeout_id } = game_state;
+                    let { current_word, current_player } = game_state;
                     // The player drawing should not be allowed to send messages!
-                    if (this.socket.id === roomState.game_state.current_player) {
+                    if (this.socket.id === current_player) {
                         consola.info(`player drawing is trying to send a message`)
                         return;
                     }
                     // if this player has already guessed then the player should not be allowed to send messages
-                    let curClientIndex = roomState.clients.findIndex(client => client.socket_id === this.socket.id)
-                    if (roomState.clients[curClientIndex].has_guessed_word) {
+                    let curClientIndex = clients.findIndex(client => client.socket_id === this.socket.id)
+                    if (clients[curClientIndex].has_guessed_word) {
                         consola.info(`Player has already guessed`)
                         return;
                     }
                     // If the guess is correct do not emit the message
                     // Instead emit `Player X has guessed the word`
                     if (current_word === data.msg && current_word !== undefined) {
-                        let currentClientIndex = roomState.clients.findIndex(client => client.socket_id === this.socket.id)
+                        let currentClientIndex = clients.findIndex(client => client.socket_id === this.socket.id)
                         // if this user has guessed word in this round do not emit message
-                        if (roomState.clients[currentClientIndex].has_guessed_word) {
+                        if (clients[currentClientIndex].has_guessed_word) {
                             return;
                         }
-                        roomState.clients[currentClientIndex].score = Number(roomState.clients[currentClientIndex].score) + 1
-                        roomState.clients[currentClientIndex].has_guessed_word = true;
+                        clients[currentClientIndex].score = Number(clients[currentClientIndex].score) + 1
+                        clients[currentClientIndex].has_guessed_word = true;
                         this.io.in(this.roomId).emit('correct-answer', { username: this.username })
 
                         let haveAllPlayersGuessed = true;
-                        for (let index = 0; index < roomState.clients.length; index++) {
+                        clients.forEach(client => {
                             // Now check if all players have guessed a word except the current player drawing
                             // if yes then clear the timeout
-                            if (roomState.clients[index].has_guessed_word === false && roomState.clients[index].socket_id !== roomState.game_state.current_player) {
+                            if (client.has_guessed_word === false && client.socket_id !== current_player) {
                                 haveAllPlayersGuessed = false;
-                                break;
+                                return false;
                             }
-                        }
-                        redisClient.set(roomState.game_state.room_id, JSON.stringify(roomState), (err, reply) => {
+                        });
+                        redisClient.set(room_id, JSON.stringify(roomState), (err, reply) => {
                             if (err) {
                                 consola.error(`Error setting key in redis!`);
                                 return;
                             }
+                            // If all players have guessed end the round by clearing the timeout
                             if (haveAllPlayersGuessed) {
-                                clearTimeout(timerMap[roomState.game_state.timeout_id])
-                                consola.success('Clearing timeout ', roomState.game_state.timeout_id)
+                                clearTimeout(timerMap[timeout_id])
+                                consola.success('Clearing timeout ', timeout_id)
                                 this.broadcastAllConnectedClients(roomState);
                                 setTimeout(this.gameLoop, 5000, roomState)
                             }
-                            consola.success(`HAVE ALL PLAYERS GUESSED `, haveAllPlayersGuessed)
+                            consola.info(`Have all players guessed `, haveAllPlayersGuessed)
                         });
                     } else {
                         // Incorrect guess emit the message
@@ -331,8 +343,9 @@ exports.Room = class {
                 }
                 if (reply) {
                     let roomData = JSON.parse(reply);
-                    let clients = roomData.clients.filter(socket => socket.socket_id != this.socket.id);
-                    roomData.clients = clients;
+                    let { clients } = roomData;
+                    let remainingClients = clients.filter(socket => socket.socket_id != this.socket.id);
+                    roomData.clients = remainingClients;
                     redisClient.set(this.roomId, JSON.stringify(roomData), (err, reply) => {
                         if (err) {
                             consola.err(`Error setting key val ${err}`);
