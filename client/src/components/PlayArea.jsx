@@ -119,6 +119,7 @@ const PlayArea = (props) => {
     useEffect(() => {
         init();
         soc.current = io(process.env.REACT_APP_API_URL, {
+            path: '/api-socket/socket.io',
             query: {
                 username: props.playerName,
                 roomId: props.roomId,
