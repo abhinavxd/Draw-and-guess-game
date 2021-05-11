@@ -7,12 +7,12 @@ Turn based multiplayer game, Each player gets a word and has to draw to it on th
 
 Uses Socket.IO and Redis for game state management, supports multiple game lobbies.
 
-Client deployment steps
-Create environment variable REACT_APP_API_URL=http://localhost:8283
+Client deployment steps <br>
+* Create environment variable REACT_APP_API_URL=http://localhost:8283 <br>
 
-Server deployment steps
-Install redis for your operating system from https://redis.io/
-Create environment variable PORT=8283
+Server deployment steps <br>
+* Install redis for your operating system from https://redis.io/ <br>
+* Create environment variable PORT=8283 <br>
 
 
 
