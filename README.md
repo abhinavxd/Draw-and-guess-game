@@ -9,10 +9,14 @@ Uses Socket.IO and Redis for game state management, supports multiple game lobbi
 
 Client deployment steps <br>
 * Create environment variable REACT_APP_API_URL=http://localhost:8283 <br>
+* npm install
+* npm start
 
 Server deployment steps <br>
 * Install redis for your operating system from https://redis.io/ <br>
 * Create environment variable PORT=8283 <br>
+* npm install
+* node index.js
 
 
 
