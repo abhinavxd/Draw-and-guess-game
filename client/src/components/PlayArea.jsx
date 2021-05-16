@@ -14,7 +14,8 @@ const PlayArea = (props) => {
     const [scoreBoard, setScoreBoard] = useState([]);
     const [showScoreBoard, setShowScoreBoard] = useState(false);
     const [isGameOver, setGameOver] = useState(false);
-    const [startTimer, setStartTimer] = useState(false);
+    const [gameStarted, setGameStarted] = useState(false);
+
     // State to store word which was selected in previous round
     const [roundEndWord, setRoundEndWord] = useState(undefined);
 
@@ -138,7 +139,6 @@ const PlayArea = (props) => {
             setCurrentWord(data.word);
         });
         soc.current.on('current-turn', (data) => {
-            setStartTimer(true);
             console.log('Current turn ', data.username);
             isCurrentPlayersTurn.current = false;
             setChatMessages([]);
@@ -167,6 +167,9 @@ const PlayArea = (props) => {
             });
             soc.current.on('client-list', (data) => {
                 setPlayersList(data.clients)
+                if (!gameStarted && data.clients.length >= 2) {
+                    setGameStarted(true);
+                }
             });
             soc.current.on('clear-board-and-current-word', (data) => {
                 erase()
@@ -273,7 +276,7 @@ const PlayArea = (props) => {
                     </div>
                 </div>
             </div>}
-            <TopGameHeader gameId={curGameId} currentWord={currentWord} startTimer={startTimer} setStartTimer={setStartTimer} />
+            <TopGameHeader gameId={curGameId} currentWord={currentWord} gameStarted={gameStarted} />
             < div className="parentContainer">
                 <div id='playerList'>
                     <PlayerList players={playersList} />
