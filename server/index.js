@@ -23,14 +23,13 @@ app.use((req, res, next) => {
     next();
 });
 
+/**
+ * To check if service is alive or not
+ */
 app.get("/ping", (req, res) => {
     res.send("pong");
 });
 
-const webServer = app.listen(8282, (server) => {
-    consola.success("Listening on port " + webServer.address().port);
-});
-
-ioServer.listen(8283, () => {
-    consola.success(`Listening for sockets on port 8283`)
+ioServer.listen(process.env.PORT, () => {
+    consola.success(`Listening for sockets on port ${process.env.PORT}`)
 });
