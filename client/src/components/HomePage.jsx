@@ -41,12 +41,15 @@ const HomePage = () => {
                     <div>
                         <label>
                             Enter your username
-                            <input type="text" required='true' ref={playerNameRef}></input>
+                            <input type="text" required={true} ref={playerNameRef}></input>
                         </label>
                     </div>
                     <div>
                         <label>
-                            <span style={{ marginRight: 10 }}>Have room-id?</span>
+                            <span style={{
+                                position: 'relative', top: -1,
+                                right: 10
+                            }}>Have room-id?</span>
                             <input style={{ padding: 10 }} onClick={showJoinRoomInput} type='checkbox' ></input>
                         </label>
                     </div>
@@ -57,7 +60,16 @@ const HomePage = () => {
                         </label>
                     </div>}
                     <button type='button' className='btn btn-success' onClick={startGameHandler}>Play</button>
-                    <h5>{process.env.REACT_APP_VER}</h5>
+                    <div className="homepage-about">
+                        <h5>
+                            How to play?
+                        </h5>
+                        <span>
+                            When its your turn to draw, you will have to visualize the word and draw it in 90 seconds,
+                            alternatively when somebody else is drawing you have to type your
+                            guess into the chat to gain points.
+                        </span>
+                    </div>
                 </div> : <PlayArea roomId={roomId} playerName={playerName} action={action} />}
         </div>
     );
