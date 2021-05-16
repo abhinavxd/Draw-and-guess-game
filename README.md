@@ -18,7 +18,7 @@
 * node index.js
 
 
-![Home page](https://project-bucket-be.s3.ap-south-1.amazonaws.com/Screenshot+from+2021-04-02+03-15-17.png)
+![Home page](https://i.ibb.co/pvWfcLZ/Screenshot-from-2021-05-16-13-01-20.png)
 
 ![Word selection](https://project-bucket-be.s3.ap-south-1.amazonaws.com/Screenshot+from+2021-04-02+03-15-43.png)
 
