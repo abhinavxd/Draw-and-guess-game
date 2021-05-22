@@ -65,6 +65,9 @@ const HomePage = () => {
                             How to play?
                         </h5>
                         <span>
+                            <div style={{marginBottom: 15}}>
+                                You need atleast two players to play this game.
+                            </div>
                             When its your turn to draw, you will have to visualize the word and draw it in 90 seconds,
                             alternatively when somebody else is drawing you have to type your
                             guess into the chat to gain points.
