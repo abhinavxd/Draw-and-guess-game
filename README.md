@@ -4,7 +4,7 @@
 ### How to play?
 
 * When its your turn to draw, you will have to visualize the word and draw it in 90 seconds, alternatively when somebody else is drawing you have to type     your guess into the chat to gain points.
-* Uses Socket.IO and Redis for game state management, supports multiple game lobbies.
+* Uses Socket.IO and Redis to manage game state, supports multiple game lobbies.
 
 # Frontend deployment steps <br>
 * Create environment variable REACT_APP_API_URL=http://localhost:8283 
