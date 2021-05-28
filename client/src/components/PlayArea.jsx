@@ -288,12 +288,12 @@ const PlayArea = (props) => {
                     <Chat chatMessages={chatMessages} inputBarText={inputBarText} handleNewMessage={handleNewMessage} handleChangeMessage={handleChangeMessage}
                     />
                 </div>
-                {isCurrentPlayersTurn.current === true &&
-                    <div className='containerToolBar'>
-                        <button type='button' className='btn btn-success' onClick={emitErase}>Erase</button>
-                    </div>
-                }
             </div >
+            {isCurrentPlayersTurn.current === true &&
+                <div className='containerToolBar'>
+                    <button type='button' className='btn btn-success' onClick={emitErase}>Erase</button>
+                </div>
+            }
         </div>
     );
 }
