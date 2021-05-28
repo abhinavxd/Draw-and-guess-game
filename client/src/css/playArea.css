@@ -7,14 +7,6 @@
     justify-content: center;
 }
 
-.containerToolBar {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 80%;
-    margin-top: 10px;
-}
-
 #chatContainer {  
     margin-left: 8px;
     width: 340px;
