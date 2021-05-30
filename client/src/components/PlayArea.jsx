@@ -4,6 +4,7 @@ import "../css/playArea.css";
 import Chat from "./Chat";
 import PlayerList from './PlayerList';
 import TopGameHeader from './TopGameHeader';
+import { STROKE_COLOUR, STROKE_SIZE } from "../utils/Constants";
 
 const PlayArea = (props) => {
     // Game state
@@ -36,8 +37,11 @@ const PlayArea = (props) => {
     let currY = useRef(0);
     let dot_flag = useRef(false);
 
-    let x = useRef("black");
-    let y = useRef(3);
+    /**
+     * Stoke colour and Size
+     */
+    let x = useRef(STROKE_COLOUR);
+    let y = useRef(STROKE_SIZE);
 
     const findxy = useCallback((res, e) => {
         if (!isCurrentPlayersTurn.current) {
@@ -162,9 +166,6 @@ const PlayArea = (props) => {
             soc.current.on('erase', () => {
                 erase();
             });
-            soc.current.on('newGameCreated', (data) => {
-                setGameId(data.gameId);
-            });
             soc.current.on('client-list', (data) => {
                 setPlayersList(data.clients)
                 if (!gameStarted && data.clients.length >= 2) {
@@ -210,17 +211,6 @@ const PlayArea = (props) => {
             });
         }
     }, [soc])
-
-    useEffect(() => {
-        if (props.roomId && props.roomId.length > 0) {
-            soc.current.emit("playerJoinGame", { gameId: props.roomId })
-            setGameId(props.roomId);
-        } else {
-            soc.current.on('newGameCreated', (data) => {
-                setGameId(data.gameId);
-            });
-        }
-    }, [props.roomId]);
 
     const hideOverlay = () => {
         setshowNewWordOverlay(false)
