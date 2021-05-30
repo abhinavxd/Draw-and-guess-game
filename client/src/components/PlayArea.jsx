@@ -4,6 +4,7 @@ import "../css/playArea.css";
 import Chat from "./Chat";
 import PlayerList from './PlayerList';
 import TopGameHeader from './TopGameHeader';
+import { STROKE_COLOUR, STROKE_SIZE } from "../utils/Constants";
 
 const PlayArea = (props) => {
     // Game state
@@ -36,8 +37,11 @@ const PlayArea = (props) => {
     let currY = useRef(0);
     let dot_flag = useRef(false);
 
-    let x = useRef("black");
-    let y = useRef(3);
+    /**
+     * Stoke colour and Size
+     */
+    let x = useRef(STROKE_COLOUR);
+    let y = useRef(STROKE_SIZE);
 
     const findxy = useCallback((res, e) => {
         if (!isCurrentPlayersTurn.current) {
