@@ -162,9 +162,6 @@ const PlayArea = (props) => {
             soc.current.on('erase', () => {
                 erase();
             });
-            soc.current.on('newGameCreated', (data) => {
-                setGameId(data.gameId);
-            });
             soc.current.on('client-list', (data) => {
                 setPlayersList(data.clients)
                 if (!gameStarted && data.clients.length >= 2) {
@@ -210,17 +207,6 @@ const PlayArea = (props) => {
             });
         }
     }, [soc])
-
-    useEffect(() => {
-        if (props.roomId && props.roomId.length > 0) {
-            soc.current.emit("playerJoinGame", { gameId: props.roomId })
-            setGameId(props.roomId);
-        } else {
-            soc.current.on('newGameCreated', (data) => {
-                setGameId(data.gameId);
-            });
-        }
-    }, [props.roomId]);
 
     const hideOverlay = () => {
         setshowNewWordOverlay(false)
