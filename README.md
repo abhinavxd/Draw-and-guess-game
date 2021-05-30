@@ -1,4 +1,4 @@
-# Draw-and-guess-game (v1.0.3)
+# Draw-and-guess-game
 [![Netlify Status](https://api.netlify.com/api/v1/badges/5ecedf27-ed37-4b09-ae16-ca07f69495b5/deploy-status)](https://app.netlify.com/sites/serene-jepsen-4741fc/deploys)
 
 ### How to play?
