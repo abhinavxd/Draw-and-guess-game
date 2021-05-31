@@ -7,9 +7,10 @@
 * Uses Socket.IO and Redis to manage game state, supports multiple game lobbies.
 
 # Frontend deployment steps <br>
-* Create environment variable 
+* Create following environment variables
 
       REACT_APP_API_URL=http://localhost:8283 
+      REACT_APP_SOCKET_PATH=
      
 * npm install
 * npm start
