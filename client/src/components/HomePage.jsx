@@ -9,6 +9,9 @@ const HomePage = () => {
     const [playerName, setCurrPlayerName] = useState(undefined);
     const [action, setAction] = useState('create');
     const [joinRoom, setJoinRoom] = useState(false);
+    const [error, setError] = useState(false);
+
+    // Input refs
     const playerRoomId = useRef(undefined)
     const playerNameRef = useRef(undefined);
 
@@ -16,6 +19,10 @@ const HomePage = () => {
      * Handler to start game and socket connection
      */
     const startGameHandler = () => {
+        if (playerNameRef.current.value.length === 0) {
+            setError(true);
+            return;
+        }
         if (playerRoomId.current && playerRoomId.current.value) {
             setGameRoomId(playerRoomId.current.value);
             setAction('join')
@@ -43,6 +50,7 @@ const HomePage = () => {
                             Enter your username
                             <input type="text" required={true} ref={playerNameRef}></input>
                         </label>
+                        {error && <p className='warn'>Please enter username</p>}
                     </div>
                     <div>
                         <label>
