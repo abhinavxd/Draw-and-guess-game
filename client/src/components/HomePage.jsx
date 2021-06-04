@@ -1,5 +1,4 @@
 import "../css/homePage.css";
-import Header from "./Header";
 import { useState, useRef } from "react";
 import PlayArea from "./PlayArea";
 
@@ -38,8 +37,7 @@ const HomePage = () => {
         setJoinRoom(!joinRoom);
     };
     return (
-        <div className='container-fluid'>
-            <Header />
+        <div className='container-fluid app-container'>
             {!gameStarted ?
                 <div id="menu-container" >
                     <div style={{ marginBottom: '0.8em' }}>

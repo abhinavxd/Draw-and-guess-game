@@ -18,3 +18,8 @@
     color:Red;
     font-weight: 600;
 }
+
+.app-container {
+    margin: 0 auto;
+    margin-top: 10vh;
+}
