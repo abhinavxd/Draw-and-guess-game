@@ -11,7 +11,7 @@ redisClient.on("error", function (error) {
     consola.error("Redis client connection failure " + error);
 });
 
-const MAX_ROUNDS_PER_MATCH = 3
+const MAX_ROUNDS_PER_MATCH = 10
 const ROUND_TIME = 90000
 let nextTimerIndex = 0
 let timerMap = {}
