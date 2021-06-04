@@ -5,6 +5,7 @@ import Chat from "./Chat";
 import PlayerList from './PlayerList';
 import TopGameHeader from './TopGameHeader';
 import { STROKE_COLOUR, STROKE_SIZE } from "../utils/Constants";
+import IO from "../utils/SocketConnection";
 
 const PlayArea = (props) => {
     // Game state
@@ -122,15 +123,14 @@ const PlayArea = (props) => {
     };
 
     useEffect(() => {
+        // initialize canvas
         init();
-        soc.current = io(process.env.REACT_APP_API_URL, {
-            path: process.env.REACT_APP_SOCKET_PATH + '/socket.io',
-            query: {
-                username: props.playerName,
-                roomId: props.roomId,
-                action: props.action
-            }
-        });
+        // create socket connection
+        soc.current = IO(props.playerName, props.roomId, props.action)
+
+        /**
+         * Listen to Socket events
+         */
         soc.current.on('new-word', (data) => {
             if (soc.current.id === data.to_socket_id) {
                 isCurrentPlayersTurn.current = true;
@@ -150,67 +150,62 @@ const PlayArea = (props) => {
         soc.current.on('round-over', (data) => {
             setRoundEndWord(data.cur_word)
             setScoreBoard(data.clients);
-            setShowScoreBoard(!showScoreBoard);
+            setShowScoreBoard(true);
+        });
+        soc.current.on('cords', (data) => {
+            currX.current = data.x;
+            currY.current = data.y;
+            prevX.current = data.prevX;
+            prevY.current = data.prevY;
+            draw();
+        });
+        soc.current.on('erase', () => {
+            erase();
+        });
+        soc.current.on('client-list', (data) => {
+            setPlayersList(data.clients)
+            if (!gameStarted && data.clients.length >= 2) {
+                setGameStarted(true);
+            }
+        });
+        soc.current.on('clear-board-and-current-word', (data) => {
+            erase()
+            setCurrentWord(undefined);
+        });
+        soc.current.on('game-over', (data) => {
+            setGameOver(true);
+            setShowScoreBoard(true);
+            setScoreBoard(data.clients);
+        });
+        soc.current.on('room-id', (data) => {
+            setGameId(data.id);
+        });
+        soc.current.on('new_message', (data) => {
+            setChatMessages((prevState) => {
+                let newState = [...prevState];
+                let inputMessage = data.msg;
+                newState.push(inputMessage);
+                return newState;
+            });
+        });
+        soc.current.on('correct-answer', data => {
+            setChatMessages((prevState) => {
+                let newState = [...prevState];
+                let inputMessage = data.username;
+                inputMessage += " has guessed the word!";
+                newState.push(inputMessage);
+                return newState;
+            });
+        });
+        soc.current.on('system-message', data => {
+            setChatMessages((prevState) => {
+                let newState = [...prevState];
+                let inputMessage = data.msg
+                newState.push(inputMessage);
+                return newState;
+            });
         });
     }, [init, props.playerName, props.roomId, props.action]);
-
-    useEffect(() => {
-        if (soc.current) {
-            soc.current.on('cords', (data) => {
-                currX.current = data.x;
-                currY.current = data.y;
-                prevX.current = data.prevX;
-                prevY.current = data.prevY;
-                draw();
-            });
-            soc.current.on('erase', () => {
-                erase();
-            });
-            soc.current.on('client-list', (data) => {
-                setPlayersList(data.clients)
-                if (!gameStarted && data.clients.length >= 2) {
-                    setGameStarted(true);
-                }
-            });
-            soc.current.on('clear-board-and-current-word', (data) => {
-                erase()
-                setCurrentWord(undefined);
-            });
-            soc.current.on('game-over', (data) => {
-                setGameOver(true);
-                setShowScoreBoard(true);
-                setScoreBoard(data.clients);
-            });
-            soc.current.on('room-id', (data) => {
-                setGameId(data.id);
-            });
-            soc.current.on('new_message', (data) => {
-                setChatMessages((prevState) => {
-                    let newState = [...prevState];
-                    let inputMessage = data.msg;
-                    newState.push(inputMessage);
-                    return newState;
-                });
-            });
-            soc.current.on('correct-answer', data => {
-                setChatMessages((prevState) => {
-                    let newState = [...prevState];
-                    let inputMessage = data.username;
-                    inputMessage += " has guessed the word!";
-                    newState.push(inputMessage);
-                    return newState;
-                });
-            });
-            soc.current.on('system-message', data => {
-                setChatMessages((prevState) => {
-                    let newState = [...prevState];
-                    let inputMessage = data.msg
-                    newState.push(inputMessage);
-                    return newState;
-                });
-            });
-        }
-    }, [soc])
 
     const hideOverlay = () => {
         setshowNewWordOverlay(false)

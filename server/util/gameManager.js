@@ -12,6 +12,7 @@ redisClient.on("error", function (error) {
 });
 
 const MAX_ROUNDS_PER_MATCH = 10
+const ROUND_TIME = 90000
 let nextTimerIndex = 0
 let timerMap = {}
 
@@ -36,8 +37,9 @@ exports.Room = class {
         redisClient.get(game_state.room_id, async (err, reply) => {
             if (err) {
                 consola.error(`err fetching ${game_state.room_id} values ${err}`);
+                return;
             }
-            // const updatedState = JSON.parse(reply);
+            
             const updatedRoomState = JSON.parse(reply);
             let { game_state: updatedGameState, clients: updatedRoomClients } = updatedRoomState;
 
@@ -60,11 +62,11 @@ exports.Room = class {
                     if (updatedGameState.round_no > 0)
                         this.io.in(`${game_state.room_id}`).emit('round-over', { clients: updatedRoomClients, cur_word: updatedGameState.current_word })
 
-                    // Wait for 5 seconds before starting a round
-                    await new Promise(resolve => setTimeout(resolve, 5000))
+                    // Wait for 3 seconds before starting a round
+                    await new Promise(resolve => setTimeout(resolve, 3000))
                     this.broadcastAllConnectedClients(updatedRoomState);
                     this.shiftTurns(updatedRoomState)
-                    let timeoutId = setTimeout(this.gameLoop, 60000, updatedRoomState)
+                    let timeoutId = setTimeout(this.gameLoop, ROUND_TIME, updatedRoomState)
                     timerMap[nextTimerIndex] = timeoutId;
                     updatedGameState.timeout_id = nextTimerIndex
                     nextTimerIndex++;
@@ -157,17 +159,18 @@ exports.Room = class {
         gameState.game_started = true;
         gameState.current_word = selectedWord;
         gameState.current_player = selectedPlayer.socket_id;
-        // Set last_play_time to current epoch time
+        // Set last_play_time to current time
         clients.forEach((client) => {
             if (client.socket_id === selectedPlayer.socket_id) {
                 client.last_play_time = Date.now();
                 return;
             }
         });
-        // Now update to redis and emit new word
+        // Now update to redis and emit required events
         redisClient.set(gameState.room_id, JSON.stringify(roomState), (err, reply) => {
             if (err) {
                 consola.error(`Error redis set ${err}`);
+                return;
             }
             this.io.to(gameState.room_id).emit('clear-board-and-current-word');
             this.io.to(gameState.room_id).emit('current-turn', { username: selectedPlayer.username });
@@ -349,6 +352,7 @@ exports.Room = class {
                     redisClient.set(this.roomId, JSON.stringify(roomData), (err, reply) => {
                         if (err) {
                             consola.err(`Error setting key val ${err}`);
+                            return;
                         }
                         consola.success(`Removed client from redis ${this.socket.id}`)
                     })
