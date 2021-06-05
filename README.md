@@ -32,3 +32,10 @@
 ![Game image](https://project-bucket-be.s3.ap-south-1.amazonaws.com/Screenshot+from+2021-04-02+03-17-09.png)
 PS. Ignore my drawing skills
 
+
+Development
+-----------
+
+If you want to work on this application I’d love your pull requests and tickets on GitHub!
+Please make sure it describes the problem or feature request fully.
+
