@@ -1,11 +1,11 @@
 import { Fragment } from "react";
-import "../css/playerList.css";
+import styles from "../css/playerList.module.css";
 const PlayerList = (props) => {
     return (
         <Fragment>
-            <div className='player-data-container'>
+            <div className={styles.playerDataContainer}>
                 {props.players.map((player, index) => (
-                    <div key={index} className='player-data'>
+                    <div key={index} className={styles.playerData}>
                         <div>
                             <b>{player.username}</b>
                         </div>

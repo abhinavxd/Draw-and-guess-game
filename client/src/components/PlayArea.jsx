@@ -1,6 +1,5 @@
-import { io } from 'socket.io-client';
 import { useCallback, useEffect, useRef, useState } from "react";
-import "../css/playArea.css";
+import styles from "../css/playArea.module.css";
 import Chat from "./Chat";
 import PlayerList from './PlayerList';
 import TopGameHeader from './TopGameHeader';
@@ -223,10 +222,10 @@ const PlayArea = (props) => {
     }
 
     return (
-        <div className='gameScreen'>
-            {showNewWordOverlay && <div className='overlay-container'>
-                <div className='overlay-content'>
-                    <i onClick={hideOverlay} className='fas fa-times close-overlay'></i>
+        <div className={styles.gameScreen}>
+            {showNewWordOverlay && <div className={styles.overlayContainer}>
+                <div className={styles.overlayContent}>
+                    <i onClick={hideOverlay} className={`fas fa-times ${styles.closeOverlay}`}></i>
                     <div>
                         Current Word:
                     </div>
@@ -235,9 +234,9 @@ const PlayArea = (props) => {
                     </div>
                 </div>
             </div>}
-            {showScoreBoard && <div className='overlay-container'>
-                <div className='overlay-content'>
-                    <i onClick={hideOverlay} className='fas fa-times close-overlay'></i>
+            {showScoreBoard && <div className={styles.overlayContainer}>
+                <div className={styles.overlayContent}>
+                    <i onClick={hideOverlay} className={`fas fa-times ${styles.closeOverlay}`}></i>
                     <div>
                         <div>
                             {`The word was ${roundEndWord}`}
@@ -262,20 +261,21 @@ const PlayArea = (props) => {
                 </div>
             </div>}
             <TopGameHeader gameId={curGameId} currentWord={currentWord} gameStarted={gameStarted} />
-            < div className="parentContainer">
-                <div id='playerList'>
+            < div className={styles.parentContainer}>
+                <div id={styles.playerList}>
                     <PlayerList players={playersList} />
                 </div>
-                <div id='containerCanvas'>
-                    <canvas width={800} height={600} id={'can'} />
+                <div id={styles.containerCanvas}>
+                    <canvas width={800} height={600} id={'can'} style={{border: '1px solid',
+    backgroundColor: 'white'}}/>
                 </div>
-                <div id="chatContainer">
+                <div id={styles.chatContainer}>
                     <Chat chatMessages={chatMessages} inputBarText={inputBarText} handleNewMessage={handleNewMessage} handleChangeMessage={handleChangeMessage}
                     />
                 </div>
             </div >
             {isCurrentPlayersTurn.current === true &&
-                <div className='containerToolBar'>
+                <div>
                     <button type='button' className='btn btn-success' onClick={emitErase}>Erase</button>
                 </div>
             }
