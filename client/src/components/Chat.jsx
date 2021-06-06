@@ -1,4 +1,4 @@
-import "./../css/chat.css";
+// import "./../css/chat.css";
 import { Fragment, useEffect, useRef } from "react";
 const Chat = (props) => {
     const chatScrollDiv = useRef();
