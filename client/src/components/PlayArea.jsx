@@ -1,6 +1,6 @@
 import { io } from 'socket.io-client';
 import { useCallback, useEffect, useRef, useState } from "react";
-import "../css/playArea.css";
+// import "../css/playArea.css";
 import Chat from "./Chat";
 import PlayerList from './PlayerList';
 import TopGameHeader from './TopGameHeader';
@@ -192,7 +192,7 @@ const PlayArea = (props) => {
             setChatMessages((prevState) => {
                 let newState = [...prevState];
                 let inputMessage = data.username;
-                inputMessage += " has guessed the word!";
+                inputMessage += " has guessed the word! 🙌 ";
                 newState.push(inputMessage);
                 return newState;
             });
@@ -224,52 +224,80 @@ const PlayArea = (props) => {
 
     return (
         <div className='gameScreen'>
-            {showNewWordOverlay && <div className='overlay-container'>
-                <div className='overlay-content'>
-                    <i onClick={hideOverlay} className='fas fa-times close-overlay'></i>
-                    <div>
-                        Current Word:
-                    </div>
-                    <div>
-                        {currentWord}
-                    </div>
-                </div>
-            </div>}
-            {showScoreBoard && <div className='overlay-container'>
-                <div className='overlay-content'>
-                    <i onClick={hideOverlay} className='fas fa-times close-overlay'></i>
-                    <div>
-                        <div>
-                            {`The word was ${roundEndWord}`}
-                        </div>
-                        <div>
-                            {!isGameOver ? 'Round over' : 'Game over final score board'}
-                        </div>
-                        {scoreBoard.map((client, index) => (
-                            <div key={index}>
-                                {isGameOver ? (
-                                    <div>
-                                        #{index + 1} {client.username} : {client.score}
+            {showNewWordOverlay && <div className="fixed z-10 inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+                <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                    <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+                    <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                    <div className="inline-block align-center bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                        <div className="bg-white px-4 pt-4 pb-4 sm:p-6 sm:pb-4">
+                            <div className="sm:flex sm:items-start">
+                                <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                                    <h3 className="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                                        {currentWord}
+                                    </h3>
+                                    <div className="mt-2">
+                                        <p className="text-sm text-gray-500">
+                                            ----some drawing hints ----  ----some drawing hints ----  ----some drawing hints ----  ----some drawing hints ----
+                                        </p>
                                     </div>
-                                ) : (
-                                    <div>
-                                        {client.username} : {client.score}
-                                    </div>
-                                )}
+                                </div>
                             </div>
-                        ))}
+                        </div>
+                        <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                            <button onClick={hideOverlay} type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm" Name>
+                                Let draw and break the canvas!
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>}
+            {showScoreBoard &&
+                <div className="fixed z-10 inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+                    <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+                        <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                        <div className="inline-block align-center bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                            <div className="bg-white px-4 pt-4 pb-4 sm:p-6 sm:pb-4">
+                                <div className="">
+                                    <div className="mt-3 sm:mt-0 sm:ml-4 sm:text-left">
+                                        <h2 className="text-3xl leading-6 font-medium text-gray-900 mb-4" id="modal-title">
+                                            The word was <span className="underline">{roundEndWord}</span>
+                                        </h2>
+                                        <h3 className="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                                            {!isGameOver ? 'Round over' : 'Game over final score board'}
+                                        </h3>
+                                        <div className="mt-3 grid grid-cols-3 gap-2">
+                                            {scoreBoard.map((client, index) => (
+                                                <p key={`pop-${index}`} className="text-left mb-0">
+                                                    {
+                                                        isGameOver
+                                                            ? (<span> {index + 1})  {client.username} : {client.score} </span>)
+                                                            : (<span> {client.username} : {client.score} </span>)
+                                                    }
+                                                </p>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                                <button onClick={hideOverlay} type="button" class="w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm" Name>
+                                    Let play again!
+                            </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
             <TopGameHeader gameId={curGameId} currentWord={currentWord} gameStarted={gameStarted} />
-            < div className="parentContainer">
-                <div id='playerList'>
+            < div className="flex mt-3">
+                <div id='playerList' className="flex-1 p-3 rounded-xl bg-indigo-100 border-indigo-200 border-4">
                     <PlayerList players={playersList} />
                 </div>
-                <div id='containerCanvas'>
+                <div id='containerCanvas' className="flex rounded-xl border-indigo-200 border-4 bg-indigo-100 mx-3 bg-opacity-20">
                     <canvas width={800} height={600} id={'can'} />
                 </div>
-                <div id="chatContainer">
+                <div id="chatContainer" className="flex-1 p-3 rounded-xl bg-indigo-100 border-indigo-200 border-4">
                     <Chat chatMessages={chatMessages} inputBarText={inputBarText} handleNewMessage={handleNewMessage} handleChangeMessage={handleChangeMessage}
                     />
                 </div>
