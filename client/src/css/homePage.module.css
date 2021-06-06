@@ -1,4 +1,4 @@
-#menu-container {
+#menuContainer {
     padding:20px;
     position: relative;
     top:2em;
@@ -9,7 +9,7 @@
     color:white;
 }
 
-.homepage-about {
+.howToPlay {
     margin-top: 30px;
     text-align: left;
 }
@@ -19,7 +19,7 @@
     font-weight: 600;
 }
 
-.app-container {
+.appContainer {
     margin: 0 auto;
     margin-top: 10vh;
 }

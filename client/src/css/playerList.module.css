@@ -1,4 +1,4 @@
-.player-data-container {
+.playerDataContainer {
     border:1px solid #eee;
     border-radius: 3px;
 }
@@ -7,6 +7,6 @@
     background-color: #EEE;
 }
 
-.player-data {
+.playerData {
     border-bottom: 1px solid lightblue;
 }

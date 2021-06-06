@@ -1,4 +1,4 @@
-import "../css/homePage.css";
+import styles from "../css/homePage.module.css";
 import { useState, useRef } from "react";
 import PlayArea from "./PlayArea";
 
@@ -37,9 +37,9 @@ const HomePage = () => {
         setJoinRoom(!joinRoom);
     };
     return (
-        <div className='container-fluid app-container'>
+        <div className={styles.appContainer}>
             {!gameStarted ?
-                <div id="menu-container" >
+                <div id={styles.menuContainer} >
                     <div style={{ marginBottom: '0.8em' }}>
                         <h1>Draw and guess!</h1>
                     </div>
@@ -48,7 +48,7 @@ const HomePage = () => {
                             Enter your username
                             <input type="text" required={true} ref={playerNameRef}></input>
                         </label>
-                        {error && <p className='warn'>Please enter username</p>}
+                        {error && <p className={styles.warn}>Please enter username</p>}
                     </div>
                     <div>
                         <label>
@@ -66,7 +66,7 @@ const HomePage = () => {
                         </label>
                     </div>}
                     <button type='button' className='btn btn-success' onClick={startGameHandler}>Play</button>
-                    <div className="homepage-about">
+                    <div className={styles.howToPlay}>
                         <h5>
                             How to play?
                         </h5>

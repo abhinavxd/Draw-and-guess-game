@@ -31,17 +31,13 @@
     background-color: white;
 }
 
-.color-white {
-    color:white;
-}
-
 .gameScreen {
     margin-bottom: 64px;
     display: flex;
     flex-direction: column;
 }
 
-.overlay-container {
+.overlayContainer {
     position: fixed;
     width: 100%;
     height: 100%;
@@ -53,7 +49,7 @@
     z-index: 2;
     cursor: pointer;
 }
-.overlay-content {
+.overlayContent {
  position: absolute;
   top: 45%;
   left: 50%;
@@ -63,7 +59,7 @@
   -ms-transform: translate(-50%,-50%);
 }
 
-.close-overlay {
+.closeOverlay {
     position: relative;
-    left: 4em;
+    left: 4.5em;
 }
