@@ -1,4 +1,4 @@
-import "../css/homePage.css";
+// import "../css/homePage.css";
 import { useState, useRef } from "react";
 import PlayArea from "./PlayArea";
 
@@ -37,16 +37,16 @@ const HomePage = () => {
         setJoinRoom(!joinRoom);
     };
     return (
-        <div className='container-fluid app-container'>
+        <div className='2xl:container 2xl:mx-auto'>
             {!gameStarted ?
-                <div id="menu-container" >
+                <div>  {/* id="menu-container" */}
                     <div style={{ marginBottom: '0.8em' }}>
                         <h1>Draw and guess!</h1>
                     </div>
                     <div>
                         <label>
                             Enter your username
-                            <input type="text" required={true} ref={playerNameRef}></input>
+                            <input type="text" required={true} className="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md" ref={playerNameRef}></input>
                         </label>
                         {error && <p className='warn'>Please enter username</p>}
                     </div>
@@ -71,7 +71,7 @@ const HomePage = () => {
                             How to play?
                         </h5>
                         <span>
-                            <div style={{marginBottom: 15}}>
+                            <div style={{ marginBottom: 15 }}>
                                 You need atleast two players to play this game.
                             </div>
                             When its your turn to draw, you will have to visualize the word and draw it in 90 seconds,
