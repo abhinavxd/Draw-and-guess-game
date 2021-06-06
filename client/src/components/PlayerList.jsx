@@ -1,5 +1,5 @@
 import { Fragment } from "react";
-import "../css/playerList.css";
+// import "../css/playerList.css";
 const PlayerList = (props) => {
     return (
         <Fragment>
