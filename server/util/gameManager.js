@@ -39,7 +39,7 @@ exports.Room = class {
                 consola.error(`err fetching ${game_state.room_id} values ${err}`);
                 return;
             }
-            
+
             const updatedRoomState = JSON.parse(reply);
             let { game_state: updatedGameState, clients: updatedRoomClients } = updatedRoomState;
 
@@ -275,6 +275,8 @@ exports.Room = class {
                     consola.error(`Error fetching room data ${this.roomId}`)
                 }
                 if (reply) {
+                    let { msg :guessedWord } = data;
+                    guessedWord = guessedWord.toLowerCase();
                     let roomState = JSON.parse(reply);
                     let { game_state, clients } = roomState;
                     let { room_id, timeout_id } = game_state;
@@ -292,7 +294,7 @@ exports.Room = class {
                     }
                     // If the guess is correct do not emit the message
                     // Instead emit `Player X has guessed the word`
-                    if (current_word === data.msg && current_word !== undefined) {
+                    if (current_word === guessedWord && current_word !== undefined) {
                         let currentClientIndex = clients.findIndex(client => client.socket_id === this.socket.id)
                         // if this user has guessed word in this round do not emit message
                         if (clients[currentClientIndex].has_guessed_word) {
@@ -327,8 +329,8 @@ exports.Room = class {
                         });
                     } else {
                         // Incorrect guess emit the message
-                        data.msg = this.username + ": " + data.msg
-                        this.io.in(this.roomId).emit('new_message', { msg: data.msg })
+                        const message = this.username + ": " + guessedWord
+                        this.io.in(this.roomId).emit('new_message', { msg: message })
                     }
                 }
             });
