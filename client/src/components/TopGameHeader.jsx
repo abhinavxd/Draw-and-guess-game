@@ -1,10 +1,10 @@
 // import "../css/topGameHeader.css";
 const TopGameHeader = ({ gameId, gameStarted, currentWord }) => {
     return (
-        <div className='pt-4 pb-2 px-3 rounded-xl bg-indigo-100'>
+        <div className='p-3 rounded-xl bg-indigo-100'>
             <div className="block">
                 {gameId !== undefined
-                    ? (<p className="font-sans text-xl">
+                    ? (<p className="font-sans text-l mb-0">
                         { !gameStarted
                             ? "To start drawing share this room ID with your friend"
                             : "Room id"

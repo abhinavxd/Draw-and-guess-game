@@ -223,7 +223,7 @@ const PlayArea = (props) => {
     }
 
     return (
-        <div className='gameScreen'>
+        <div className='mt-5'>
             {showNewWordOverlay && <div className="fixed z-10 inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
                 <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
                     <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
@@ -290,21 +290,26 @@ const PlayArea = (props) => {
                 </div>
             }
             <TopGameHeader gameId={curGameId} currentWord={currentWord} gameStarted={gameStarted} />
-            < div className="flex mt-3">
-                <div id='playerList' className="flex-1 p-3 rounded-xl bg-indigo-100 border-indigo-200 border-4">
+            <div className="grid grid-cols-5 mt-3">
+                <div id='playerList' className=" p-3 rounded-xl bg-indigo-100 border-indigo-200 border-4">
                     <PlayerList players={playersList} />
                 </div>
-                <div id='containerCanvas' className="flex rounded-xl border-indigo-200 border-4 bg-indigo-100 mx-3 bg-opacity-20">
-                    <canvas width={800} height={600} id={'can'} />
+                <div id='containerCanvas' className="col-span-3 block rounded-xl border-indigo-200 border-4 bg-indigo-100 mx-3 bg-opacity-20">
+                    <canvas height={400} width={625} id={'can'} />
                 </div>
-                <div id="chatContainer" className="flex-1 p-3 rounded-xl bg-indigo-100 border-indigo-200 border-4">
+                <div id="chatContainer" className="p-3 rounded-xl bg-indigo-100 border-indigo-200 border-4">
                     <Chat chatMessages={chatMessages} inputBarText={inputBarText} handleNewMessage={handleNewMessage} handleChangeMessage={handleChangeMessage}
                     />
                 </div>
             </div >
             {isCurrentPlayersTurn.current === true &&
-                <div className='containerToolBar'>
-                    <button type='button' className='btn btn-success' onClick={emitErase}>Erase</button>
+                <div className='flex justify-center mt-3'>
+                    <div class="inline-flex rounded-md shadow">
+                        <a href="#" onClick={emitErase} class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+                        Erase and give another shot...
+                        </a>
+                    </div>
+                    {/* <button type='button' className='btn btn-success' onClick={emitErase}>Erase</button> */}
                 </div>
             }
         </div>

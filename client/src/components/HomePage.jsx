@@ -37,7 +37,7 @@ const HomePage = () => {
         setJoinRoom(!joinRoom);
     };
     return (
-        <div className='2xl:container 2xl:mx-auto'>
+        <div className='container'>
             {!gameStarted ?
                 <div>  {/* id="menu-container" */}
                     <div style={{ marginBottom: '0.8em' }}>
