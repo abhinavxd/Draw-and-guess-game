@@ -235,11 +235,11 @@ const PlayArea = (props) => {
                                     <h3 className="text-lg leading-6 font-medium text-gray-900" id="modal-title">
                                         {currentWord}
                                     </h3>
-                                    <div className="mt-2">
+                                    {/* <div className="mt-2">
                                         <p className="text-sm text-gray-500">
                                             ----some drawing hints ----  ----some drawing hints ----  ----some drawing hints ----  ----some drawing hints ----
                                         </p>
-                                    </div>
+                                    </div> */}
                                 </div>
                             </div>
                         </div>
@@ -297,7 +297,7 @@ const PlayArea = (props) => {
                 <div id='containerCanvas' className="col-span-3 block rounded-xl border-indigo-200 border-4 bg-indigo-100 mx-3 bg-opacity-20">
                     <canvas height={400} width={625} id={'can'} />
                 </div>
-                <div id="chatContainer" className="p-3 rounded-xl bg-indigo-100 border-indigo-200 border-4">
+                <div id="chatContainer" className="p-2 rounded-xl bg-indigo-100 border-indigo-200 border-4 h-full">
                     <Chat chatMessages={chatMessages} inputBarText={inputBarText} handleNewMessage={handleNewMessage} handleChangeMessage={handleChangeMessage}
                     />
                 </div>

@@ -24,7 +24,7 @@ const Chat = (props) => {
 
     return (
         <Fragment>
-            <div className="chats" ref={chatScrollDiv}>
+            <div className="chats overflow-y-auto h-80 mb-4" ref={chatScrollDiv}>
                 {!!props.chatMessages.length && (props.chatMessages.map((item, index) => (
                     <p key={index}>{item}</p>
                 )))}
