@@ -1,4 +1,4 @@
-import styles from "./../css/chat.module.css";
+// import "./../css/chat.css";
 import { Fragment, useEffect, useRef } from "react";
 const Chat = (props) => {
     const chatScrollDiv = useRef();
@@ -24,12 +24,12 @@ const Chat = (props) => {
 
     return (
         <Fragment>
-            <div className={styles.chats} ref={chatScrollDiv}>
+            <div className="chats overflow-y-auto h-80 mb-4" ref={chatScrollDiv}>
                 {!!props.chatMessages.length && (props.chatMessages.map((item, index) => (
                     <p key={index}>{item}</p>
                 )))}
             </div>
-            <form id={styles.chatInput} onSubmit={props.handleNewMessage}>
+            <form id='chat-input' onSubmit={props.handleNewMessage}>
                 <input onChange={props.handleChangeMessage} value={props.inputBarText} className="form-control" id="inputChat" autoComplete="off" type="text" placeholder="Type your guess here.." maxLength="100" />
             </form>
             <div ></div>
