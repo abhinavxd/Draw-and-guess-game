@@ -10,6 +10,7 @@
 * Create following environment variables
 
       REACT_APP_API_URL=http://localhost:8283 
+      REACT_APP_DOMAIN=http://localhost:3000
       REACT_APP_SOCKET_PATH=
      
 * npm install
