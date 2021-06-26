@@ -43,7 +43,7 @@ const HomePage = () => {
                     <div style={{ marginBottom: '0.8em' }}>
                     <h1 class="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
                         {/* <span class="block xl:inline">Data to enrich your</span> */}
-                        <span class="block text-indigo-600 xl:inline">Draw and guess!s</span>
+                        <span class="block text-indigo-600 xl:inline">Draw and guess!</span>
                     </h1>
                     </div>
 
@@ -52,7 +52,7 @@ const HomePage = () => {
                         <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
                             Username
                         </label>
-                        <input class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500" id="inline-full-name" type="text" placeholder="jenny" ref={playerNameRef} />
+                        <input required class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500" id="inline-full-name" type="text" placeholder="Jenny" ref={playerNameRef} />
                         {error && <p className='warn'>Please enter username</p>}
                         </div>
 
@@ -60,7 +60,7 @@ const HomePage = () => {
                         <label class="md:w-2/3 block text-gray-500 font-bold">
                             <input class="mr-2 leading-tight" type="checkbox" onClick={showJoinRoomInput} />
                             <span class="text-sm">
-                                Have friend's room-id ?
+                                Have friends room-id ?
                             </span>
                             </label>
                         </div>
@@ -74,18 +74,18 @@ const HomePage = () => {
 
                         <div class="mb-4">
                         <button class="shadow bg-indigo-500 hover:bg-indigo-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" type="button" onClick={startGameHandler} >
-                            Lest Play!
+                            Play!
                         </button>
                         </div>
 
                     </div>
 
                     <div className="homepage-about">
-                        <h5>
+                        <h3>
                             How to play?
-                        </h5>
+                        </h3>
                         <span>
-                            <div style={{ marginBottom: 15 }}>
+                            <div style={{ marginBottom: 10 }}>
                                 You need atleast two players to play this game.
                             </div>
                             When its your turn to draw, you will have to visualize the word and draw it in 90 seconds,
