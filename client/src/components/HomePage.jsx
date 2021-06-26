@@ -1,34 +1,36 @@
 import styles from "../css/homePage.module.css";
-import { useState, useRef } from "react";
+import { useState, useEffect } from "react";
 import PlayArea from "./PlayArea";
 
 const HomePage = () => {
     const [gameStarted, setGameStarted] = useState(false);
-    const [roomId, setGameRoomId] = useState(undefined);
-    const [playerName, setCurrPlayerName] = useState(undefined);
     const [action, setAction] = useState('create');
     const [joinRoom, setJoinRoom] = useState(false);
     const [error, setError] = useState(false);
-
-    // Input refs
-    const playerRoomId = useRef(undefined)
-    const playerNameRef = useRef(undefined);
+    const [playerRoomId, setPlayerRoomId] = useState(undefined)
+    const [playerName, setPlayerName] = useState('');
 
     /**
      * Handler to start game and socket connection
      */
     const startGameHandler = () => {
-        if (playerNameRef.current.value.length === 0) {
+        if (playerName.length === 0) {
             setError(true);
             return;
         }
-        if (playerRoomId.current && playerRoomId.current.value) {
-            setGameRoomId(playerRoomId.current.value);
+        if (playerRoomId) {
             setAction('join')
         }
-        setCurrPlayerName(playerNameRef.current.value);
         setGameStarted(true);
     };
+
+    useEffect(() => {
+        const playerRoomFromURL = window.location.pathname.replace("/", "").trim();
+        if (playerRoomFromURL.length > 0) {
+            setPlayerRoomId(playerRoomFromURL)
+            setJoinRoom(true)
+        }
+    }, [])
 
     /**
      * Show/hide input for room-id
@@ -46,7 +48,7 @@ const HomePage = () => {
                     <div>
                         <label>
                             Enter your username
-                            <input type="text" required={true} ref={playerNameRef}></input>
+                            <input type="text" required={true} onChange={(e) => setPlayerName(e.target.value)} ></input>
                         </label>
                         {error && <p className={styles.warn}>Please enter username</p>}
                     </div>
@@ -56,13 +58,13 @@ const HomePage = () => {
                                 position: 'relative', top: -1,
                                 right: 10
                             }}>Have room-id?</span>
-                            <input style={{ padding: 10 }} onClick={showJoinRoomInput} type='checkbox' ></input>
+                            <input style={{ padding: 10 }} onChange={showJoinRoomInput} type='checkbox' checked={joinRoom}></input>
                         </label>
                     </div>
                     {joinRoom && <div>
                         <label>
                             Enter your friends room id
-                        <input type="text" name="room-id" ref={playerRoomId} id="player-room-id" />
+                            <input type="text" name="room-id" id="player-room-id" onChange={(e) => setPlayerRoomId(e.target.value)} value={playerRoomId} />
                         </label>
                     </div>}
                     <button type='button' className='btn btn-success' onClick={startGameHandler}>Play</button>
@@ -71,7 +73,7 @@ const HomePage = () => {
                             How to play?
                         </h5>
                         <span>
-                            <div style={{marginBottom: 15}}>
+                            <div style={{ marginBottom: 15 }}>
                                 You need atleast two players to play this game.
                             </div>
                             When its your turn to draw, you will have to visualize the word and draw it in 90 seconds,
@@ -79,7 +81,7 @@ const HomePage = () => {
                             guess into the chat to gain points.
                         </span>
                     </div>
-                </div> : <PlayArea roomId={roomId} playerName={playerName} action={action} />}
+                </div> : <PlayArea roomId={playerRoomId} playerName={playerName} action={action} />}
         </div>
     );
 }
