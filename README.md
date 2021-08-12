@@ -23,7 +23,7 @@
       PORT=8283 
      
 * npm install
-* node index.js!
+* node index.js
 
 
 ![draw-and-guess](https://user-images.githubusercontent.com/48166553/126893424-bd9d9a15-308c-415b-81b0-d15a640a117f.gif)
