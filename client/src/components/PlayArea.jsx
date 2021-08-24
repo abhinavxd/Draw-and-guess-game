@@ -172,6 +172,7 @@ const PlayArea = (props) => {
             setCurrentWord(undefined);
         });
         soc.current.on('game-over', (data) => {
+            setRoundEndWord(data.cur_word);
             setGameOver(true);
             setShowScoreBoard(true);
             setScoreBoard(data.clients);
