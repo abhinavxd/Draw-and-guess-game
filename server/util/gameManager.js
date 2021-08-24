@@ -51,7 +51,7 @@ exports.Room = class {
 
             // CHECK if game is over or not and send `game-over` event if the game's over
             if (updatedGameState.round_no >= updatedGameState.max_rounds) {
-                this.io.in(`${game_state.room_id}`).emit('game-over', { clients: updatedRoomClients })
+                this.io.in(`${game_state.room_id}`).emit('game-over', { clients: updatedRoomClients, cur_word: updatedGameState.current_word})
                 redisClient.del(updatedGameState.room_id)
             } else {
                 redisClient.set(this.roomId, JSON.stringify(updatedRoomState), async (err, reply) => {
