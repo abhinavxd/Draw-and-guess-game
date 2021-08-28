@@ -41,16 +41,23 @@ exports.Room = class {
             }
 
             const updatedRoomState = JSON.parse(reply);
-            let { game_state: updatedGameState, clients: updatedRoomClients } = updatedRoomState;
+            let { game_state: updatedGameState, clients: updatedRoomClients, timeout_id } = updatedRoomState;
 
             consola.success('Rounds -> ', updatedGameState.round_no, "  ", updatedGameState.max_rounds);
+
+            // check if players are still in the room/lobby
+            const arePlayersStillInRoom = updatedRoomClients.length > 0;
+            consola.info(`Number of players in room ${updatedRoomClients.length}`)
+
             // Set has_guessed_word to false for all clients for fresh round
             updatedRoomClients.forEach((client) => {
                 client.has_guessed_word = false;
             });
 
             // CHECK if game is over or not and send `game-over` event if the game's over
-            if (updatedGameState.round_no >= updatedGameState.max_rounds) {
+            if ((updatedGameState.round_no >= updatedGameState.max_rounds) || !arePlayersStillInRoom) {
+                clearTimeout(timerMap[timeout_id])
+                consola.success('Clearing timeout ', timeout_id)
                 this.io.in(`${game_state.room_id}`).emit('game-over', { clients: updatedRoomClients, cur_word: updatedGameState.current_word})
                 redisClient.del(updatedGameState.room_id)
             } else {
@@ -146,7 +153,6 @@ exports.Room = class {
         let selectedPlayer = clients.reduce(function (prev, curr) {
             return prev.last_play_time < curr.last_play_time ? prev : curr;
         });
-        consola.success('Current player ', selectedPlayer);
         const wordListFromDb = words['words']
         // Now get words selected previous in this game
         // And select a word which has not been selected previously
@@ -245,7 +251,8 @@ exports.Room = class {
             }
             redisClient.SETNX(this.roomId, JSON.stringify(roomState), (err, reply) => {
                 if (err) {
-                    consola.error(`Error redis SETNX ${err}`);
+                    consola.error(`Error redis SETNEX ${err}`);
+                    return;
                 }
                 consola.info(`REPLY from SETNX ${reply}`);
                 this.broadcastAllConnectedClients(roomState);
@@ -320,16 +327,13 @@ exports.Room = class {
                             }
                             // If all players have guessed end the round by clearing the timeout
                             if (haveAllPlayersGuessed) {
-                                clearTimeout(timerMap[timeout_id])
-                                consola.success('Clearing timeout ', timeout_id)
-                                this.broadcastAllConnectedClients(roomState);
-                                setTimeout(this.gameLoop, 5000, roomState)
+                                this.startNextRound(timeout_id, roomState);
                             }
                             consola.info(`Have all players guessed `, haveAllPlayersGuessed)
                         });
                     } else {
                         // Incorrect guess emit the message
-                        const message = this.username + ": " + guessedWord
+                        const message = this.username + ": " + guessedWord;
                         this.io.in(this.roomId).emit('new_message', { msg: message })
                     }
                 }
@@ -361,6 +365,19 @@ exports.Room = class {
                 }
             });
         });
+    }
+
+    /**
+     *  Start the next round:
+     *  1. Clear pending timeouts
+     *  2. Broadcast client list
+     *  3. Start game loop again
+     **/
+    startNextRound(timeout_id, roomState) {
+        clearTimeout(timerMap[timeout_id])
+        consola.success('Clearing timeout ', timeout_id)
+        this.broadcastAllConnectedClients(roomState);
+        setTimeout(this.gameLoop, 5000, roomState)
     }
 
     /**
