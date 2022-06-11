@@ -58,9 +58,3 @@
   transform: translate(-50%,-50%);
   -ms-transform: translate(-50%,-50%);
 }
-
-.closeOverlay {
-    position: relative;
-    left: 4.5em;
-    font-size: 40px;
-}

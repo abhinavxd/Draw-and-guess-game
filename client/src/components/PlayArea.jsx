@@ -153,6 +153,9 @@ const PlayArea = (props) => {
             setRoundEndWord(data.cur_word)
             setScoreBoard(data.clients);
             setShowScoreBoard(true);
+            setTimeout(() => {
+                setShowScoreBoard(false);
+            }, 3000);
         });
         soc.current.on('cords', (data) => {
             currX.current = data.x;
@@ -179,6 +182,9 @@ const PlayArea = (props) => {
             setGameOver(true);
             setShowScoreBoard(true);
             setScoreBoard(data.clients);
+            setTimeout(() => {
+                setShowScoreBoard(false);
+            }, 30000);
         });
         soc.current.on('room-id', (data) => {
             setGameId(data.id);
@@ -210,10 +216,6 @@ const PlayArea = (props) => {
         });
     }, [init, props.playerName, props.roomId, props.action]);
 
-    const hideOverlay = () => {
-        setshowNewWordOverlay(false)
-        setShowScoreBoard(false)
-    };
 
     const handleNewMessage = (e) => {
         e.preventDefault();
@@ -229,7 +231,6 @@ const PlayArea = (props) => {
         <div className={styles.gameScreen}>
             {showNewWordOverlay && <div className={styles.overlayContainer}>
                 <div className={styles.overlayContent}>
-                <div onClick={hideOverlay} className={`${styles.closeOverlay}`}>❌</div>
                     <div>
                         Current Word:
                     </div>
@@ -240,7 +241,6 @@ const PlayArea = (props) => {
             </div>}
             {showScoreBoard && <div className={styles.overlayContainer}>
                 <div className={styles.overlayContent}>
-                    <div onClick={hideOverlay} className={`${styles.closeOverlay}`}>❌</div>
                     <div>
                         <div>
                             {`The word was ${roundEndWord}`}
