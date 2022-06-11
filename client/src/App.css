@@ -7,7 +7,8 @@
 }
 
 body {
-  background-image: url(https://abhinav-project-bucket.s3.ap-south-1.amazonaws.com/wp.jpg);
+  background: url('./assets/background.png') center fixed;
+  background-size: 256px;
 }
 
 input {
