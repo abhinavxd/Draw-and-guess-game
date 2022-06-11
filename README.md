@@ -1,7 +1,9 @@
 # Draw-and-guess-game
+- Clone of web-based drawing game skribbl.io
+
 [![Netlify Status](https://api.netlify.com/api/v1/badges/5ecedf27-ed37-4b09-ae16-ca07f69495b5/deploy-status)](https://app.netlify.com/sites/serene-jepsen-4741fc/deploys)
 
-![draw-and-guess](https://user-images.githubusercontent.com/48166553/126893424-bd9d9a15-308c-415b-81b0-d15a640a117f.gif)
+![Peek 2022-06-12 03-12](https://user-images.githubusercontent.com/48166553/173205874-e72223db-bfb8-44c4-ba81-28384a072ff8.gif)
 PS. Ignore my drawing skills
 
 
