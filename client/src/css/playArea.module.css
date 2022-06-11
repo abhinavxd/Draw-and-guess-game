@@ -62,4 +62,5 @@
 .closeOverlay {
     position: relative;
     left: 4.5em;
+    font-size: 40px;
 }

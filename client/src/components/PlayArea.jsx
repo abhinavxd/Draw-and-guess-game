@@ -226,7 +226,7 @@ const PlayArea = (props) => {
         <div className={styles.gameScreen}>
             {showNewWordOverlay && <div className={styles.overlayContainer}>
                 <div className={styles.overlayContent}>
-                    <i onClick={hideOverlay} className={`fas fa-times ${styles.closeOverlay}`}></i>
+                <div onClick={hideOverlay} className={`${styles.closeOverlay}`}>❌</div>
                     <div>
                         Current Word:
                     </div>
@@ -237,7 +237,7 @@ const PlayArea = (props) => {
             </div>}
             {showScoreBoard && <div className={styles.overlayContainer}>
                 <div className={styles.overlayContent}>
-                    <i onClick={hideOverlay} className={`fas fa-times ${styles.closeOverlay}`}></i>
+                    <div onClick={hideOverlay} className={`${styles.closeOverlay}`}>❌</div>
                     <div>
                         <div>
                             {`The word was ${roundEndWord}`}
