@@ -137,6 +137,9 @@ const PlayArea = (props) => {
             setCurrentWord(data.word);
             setShowScoreBoard(false)
             setshowNewWordOverlay(true)
+            setTimeout(() => {
+                setshowNewWordOverlay(false)
+            }, 3000);
         });
         soc.current.on('hidden-word', (data) => {
             setCurrentWord(data.word);
