@@ -7,7 +7,7 @@ const PlayerList = (props) => {
                 {props.players.map((player, index) => (
                     <div key={index} className={styles.playerData}>
                         <div>
-                            <b>{player.username}</b>
+                            <span>{player.username}</span>
                         </div>
                         <div>
                             Score: <b>{player.score}</b>

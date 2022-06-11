@@ -4,9 +4,10 @@
     top:2em;
     width:22em;
     margin:auto auto;
-    background-color: rgba(59,130,246,0.5);
-    border-radius: 3px;
+    background-color: rgba(59, 109, 246, 0.93);
+    border-radius: 5px;
     color:white;
+    font-size: larger;
 }
 
 .howToPlay {
