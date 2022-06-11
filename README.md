@@ -10,7 +10,7 @@ PS. Ignore my drawing skills
 * When its your turn to draw, you will have to visualize the word and draw it in 90 seconds, alternatively when somebody else is drawing you have to type     your guess into the chat to gain points.
 * Uses Socket.IO and Redis to manage game state, supports multiple game lobbies.
 
-### Frontend deployment steps <br>
+### Frontend dev setup
 * Create following environment variables
 
       REACT_APP_API_URL=http://localhost:8283 
@@ -19,7 +19,7 @@ PS. Ignore my drawing skills
 * npm install
 * npm start
 
-### Backend deployment steps <br>
+### Backend dev setup <br>
 * Install redis for your operating system from https://redis.io/ <br>
 * Create environment variable 
 
